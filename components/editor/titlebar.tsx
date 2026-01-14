@@ -56,7 +56,7 @@ export function Titlebar({
     <div className="flex items-center justify-between h-18 w-[calc(100vw-88px)] px-4 border-b">
       <span className="flex flex-col">
         <p className="font-medium text-2xl">{site.name}</p>
-        <p className="text-sm">Post Editor</p>
+        <p className="text-sm">Page Editor</p>
       </span>
       <div className="flex bg-muted rounded-lg">
         {viewTools.map((v, i) => (

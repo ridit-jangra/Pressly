@@ -1,89 +1,88 @@
-export class Component {
-  private tag: string = "div";
-  private label: string = "component";
-  private background: string = "black";
-  private foreground: string = "white";
-  private code: string = `<${this.tag} class="bg-${this.background} text-${this.foreground}">${this.label}</{${this.tag}>`;
-  private classes: string[] = ["cursor-pointer", "p-2"];
+import {
+  IComponentChildOption,
+  IComponentOption,
+  IComponentState,
+} from "@/lib/types";
 
-  public updateCode(): string {
-    let customClasses = "";
-    this.classes.forEach((v) => {
-      customClasses = `${customClasses} ${v}`;
-    });
+export abstract class Component {
+  public tag: string = "";
+  public text: string = "";
+  public classes: string[] = [];
+  public styles: React.CSSProperties = {}; // NEW: Store inline styles
+  public code: string = "";
 
-    this.code = `<${this.tag} class="bg-${this.background} text-${this.foreground} ${customClasses}">${this.label}</${this.tag}>`;
-    return this.code;
+  // Instance-specific state
+  public state: IComponentState = {};
+
+  abstract editOptions: IComponentOption[];
+  abstract childOptions: IComponentChildOption[];
+
+  constructor() {
+    this.update();
   }
 
-  public updateLabel(label: string): string {
-    this.label = label;
-    const code = this.updateCode();
-
-    return code;
-  }
-
-  public updateBackground(background: string): string {
-    this.background = background;
-    const code = this.updateCode();
-
-    return code;
-  }
-
-  public updateForeground(foreground: string): string {
-    this.foreground = foreground;
-    const code = this.updateCode();
-
-    return code;
-  }
-
-  public updateTag(tag: string): string {
-    this.tag = tag;
-    const code = this.updateCode();
-
-    return code;
-  }
+  abstract update(): void;
 
   public updateAll(
     tag: string,
-    label: string,
-    background: string,
-    foreground: string,
-    classes?: string[]
-  ): string {
-    this.updateTag(tag);
-    this.updateLabel(label);
-    this.updateBackground(background);
-    this.updateForeground(foreground);
-    this.updateAllClasses(classes || this.classes);
-
-    const code = this.updateCode();
-
-    return code;
+    text: string,
+    classes: string[],
+    styles: React.CSSProperties = {} // NEW: Accept styles parameter
+  ) {
+    this.tag = tag;
+    this.text = text;
+    this.classes = classes;
+    this.styles = styles;
+    this.updateCode();
   }
 
-  public updateAllClasses(newClasses: string[]): string {
-    this.classes = newClasses;
-    const code = this.updateCode();
-
-    return code;
+  public addClass(className: string) {
+    if (!this.classes.includes(className)) {
+      this.classes.push(className);
+    }
   }
 
-  public addClass(newClass: string): string {
-    this.classes.push(newClass);
-    const code = this.updateCode();
-
-    return code;
+  public removeClass(className: string) {
+    this.classes = this.classes.filter((c) => c !== className);
   }
 
-  public removeClass(classToRemove: string): string {
-    this.classes = this.classes.filter((c) => c !== classToRemove);
-    const code = this.updateCode();
-
-    return code;
+  public setStyle(property: string, value: string | number) {
+    (this.styles as any)[property] = value;
   }
 
-  public getCode() {
+  public removeStyle(property: keyof React.CSSProperties) {
+    delete this.styles[property];
+  }
+
+  public updateCode() {
+    const classString = this.classes.join(" ");
+    const styleString = Object.entries(this.styles)
+      .map(([key, value]) => `${key}: ${value}`)
+      .join("; ");
+
+    const styleAttr = styleString ? ` style="${styleString}"` : "";
+    this.code = `<${this.tag} class="${classString}"${styleAttr}>${this.text}</${this.tag}>`;
+  }
+
+  public getCode(): string {
     return this.code;
+  }
+
+  // Apply state to component
+  public applyState(state: IComponentState) {
+    this.state = { ...state };
+
+    // Apply state values to component properties
+    Object.keys(state).forEach((key) => {
+      const [parentId, label] = key.split("-");
+      this.handleStateChange(parentId, label, state[key]);
+    });
+
+    this.updateCode();
+  }
+
+  // Override this in subclasses to handle state changes
+  protected handleStateChange(parentId: string, label: string, value: any) {
+    // Default implementation - override in subclasses
   }
 }

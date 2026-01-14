@@ -6,7 +6,10 @@ import {
   IActivitybarTool,
   IComponent,
   IComponentPage,
+  IComponentState,
   IExtendedComponent,
+  ILayoutComponent,
+  ILayoutPage,
 } from "@/lib/types";
 import { Titlebar } from "./titlebar";
 import {
@@ -24,6 +27,7 @@ import {
   DragEndEvent,
 } from "@dnd-kit/core";
 import { ComponentEditor } from "./component-editor";
+import { Component } from "../site/component";
 
 export function Layout() {
   const [cursorTools, setCursorTools] = useState<IActivitybarTool[]>([]);
@@ -32,11 +36,14 @@ export function Layout() {
   const [currentViewTool, setCurrentViewTool] = useState<string>();
   const [components, setComponents] = useState<IComponent[]>([]);
   const [componentsPages, setComponentsPages] = useState<IComponentPage[]>([]);
+  const [layouts, setLayouts] = useState<ILayoutComponent[]>([]);
+  const [layoutsPages, setLayoutsPages] = useState<ILayoutPage[]>([]);
   const [currentSelectedComponent, setCurrentSelectedComponents] =
     useState<IExtendedComponent>();
   const [draggableComponents, setDraggableComponents] = useState<
     IExtendedComponent[]
   >([]);
+  const [formValues, setFormValues] = useState<Record<string, any>>({});
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -52,11 +59,11 @@ export function Layout() {
     if (!over) return;
 
     setDraggableComponents((prev) => {
-      const existingItem = prev.find((item) => item.id === active.id);
+      const existingItem = prev.find((item) => item.instanceId === active.id);
 
       if (existingItem) {
         return prev.map((item) => {
-          if (item.id === active.id && item.position) {
+          if (item.instanceId === active.id && item.position) {
             return {
               ...item,
               position: {
@@ -70,12 +77,30 @@ export function Layout() {
       } else {
         const component = components.find((c) => c.id === active.id);
         if (component && over.id === "component-zone") {
+          const ComponentClass = component.content.node
+            .constructor as new () => Component;
+          const newNode = new ComponentClass();
+
+          const initialState: IComponentState = {};
+          newNode.childOptions?.forEach((child) => {
+            child.options.forEach((option) => {
+              const key = `${child.parentId}-${option.label}`;
+              initialState[key] = option.default ?? "";
+            });
+          });
+
+          newNode.applyState(initialState);
+
+          const instanceId = `${component.id}-${Date.now()}`;
+
           const newComponent: IExtendedComponent = {
-            id: `${component.id}-${Date.now()}`,
+            id: component.id,
+            instanceId: instanceId,
             label: component.label,
-            content: component.content,
+            content: { node: newNode },
             inZone: true,
             position: { x: delta.x, y: delta.y },
+            state: initialState,
           };
           return [...prev, newComponent];
         }
@@ -120,6 +145,10 @@ export function Layout() {
                 setComponents={setComponents}
                 componentsPages={componentsPages}
                 setComponentsPages={setComponentsPages}
+                layouts={layouts}
+                setLayouts={setLayouts}
+                layoutsPages={layoutsPages}
+                setLayoutsPages={setLayoutsPages}
               />
             </ResizablePanel>
             <ResizableHandle />
@@ -129,6 +158,7 @@ export function Layout() {
                 setDraggableComponents={setDraggableComponents}
                 currentSelectedComponent={currentSelectedComponent}
                 setCurrentSelectedComponent={setCurrentSelectedComponents}
+                formValues={formValues}
               />
             </ResizablePanel>
             {currentSelectedComponent && (
@@ -138,6 +168,10 @@ export function Layout() {
                   <ComponentEditor
                     currentSelectedComponent={currentSelectedComponent}
                     setCurrentSelectedComponent={setCurrentSelectedComponents}
+                    formValues={formValues}
+                    setFormValues={setFormValues}
+                    setDraggableComponents={setDraggableComponents}
+                    draggableComponents={draggableComponents}
                   />
                 </ResizablePanel>
               </>

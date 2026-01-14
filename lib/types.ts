@@ -31,6 +31,23 @@ export interface IComponentPage {
   icon: LucideIcon;
 }
 
+export interface ILayoutComponent {
+  pageId: string;
+  id: string;
+  label: string;
+  content: IContent;
+}
+
+export interface ILayoutContent {
+  node: Component;
+}
+
+export interface ILayoutPage {
+  id: string;
+  name: string;
+  icon: LucideIcon;
+}
+
 export interface IMetaData {
   description: string;
   keywords: string[];
@@ -107,11 +124,17 @@ export interface ISidebarProps {
   setComponents: (components: IComponent[]) => void;
   componentsPages: IComponentPage[];
   setComponentsPages: (componentsPages: IComponentPage[]) => void;
+  layouts: ILayoutComponent[];
+  setLayouts: (layouts: ILayoutComponent[]) => void;
+  layoutsPages: ILayoutPage[];
+  setLayoutsPages: (layoutPages: ILayoutPage[]) => void;
 }
 
 export interface IWidgetsProps {
   components: IComponent[];
   componentsPages: IComponentPage[];
+  layouts: ILayoutComponent[];
+  layoutsPages: ILayoutPage[];
 }
 
 export interface IEditorProps {
@@ -119,6 +142,8 @@ export interface IEditorProps {
   setDraggableComponents: (components: IExtendedComponent[]) => void;
   currentSelectedComponent?: IExtendedComponent;
   setCurrentSelectedComponent: (component: IExtendedComponent) => void;
+  formValues: Record<string, any>;
+  dragPreview?: { x: number; y: number } | null;
 }
 
 export interface IDropZoneProps {
@@ -136,6 +161,10 @@ export interface IDraggableItemProps {
 export interface IComponentEditorProps {
   currentSelectedComponent?: IExtendedComponent;
   setCurrentSelectedComponent: (component: IExtendedComponent) => void;
+  formValues: Record<string, any>;
+  setFormValues: (values: Record<string, any>) => void;
+  setDraggableComponents: Function;
+  draggableComponents: IExtendedComponent[];
 }
 
 export interface IPosition {
@@ -143,16 +172,46 @@ export interface IPosition {
   y: number;
 }
 
+export interface IComponentState {
+  [key: string]: any;
+}
+
 export interface IExtendedComponent extends Omit<IComponent, "pageId"> {
   position: IPosition | null;
   inZone: boolean;
+  state: IComponentState;
+  instanceId: string;
 }
 
 export interface ISelectOption {
   label: string;
-  type: string;
+  type: "select";
   options: string[];
   default: string | number | boolean;
+  onChange?: (value: string) => void;
+}
+
+export interface INumberOption {
+  label: string;
+  default: number;
+  type: "number";
+  max: number;
+  min: number;
+  onChange?: (value: number) => void;
+}
+
+export interface IColorOption {
+  label: string;
+  default: string;
+  type: "color";
+  onChange?: (value: string) => void;
+}
+
+export interface ITextOption {
+  label: string;
+  default: string;
+  type: "text";
+  onChange?: (value: string) => void;
 }
 
 export interface IComponentOption {
@@ -162,5 +221,11 @@ export interface IComponentOption {
 
 export interface IComponentChildOption {
   parentId: string;
-  options: ISelectOption[];
+  options: ISelectOption[] | INumberOption[] | ITextOption[] | IColorOption[];
 }
+
+export type TOption =
+  | ITextOption[]
+  | IColorOption[]
+  | INumberOption[]
+  | ISelectOption[];
