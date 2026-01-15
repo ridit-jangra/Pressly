@@ -4,9 +4,9 @@ import { EditorLayout } from "@/components/editor/layout";
 import { Storage } from "@/lib/storage";
 import { IPage } from "@/lib/types";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 
-export default function Page() {
+function EditPageContent() {
   const [page, setPage] = useState<IPage | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -42,4 +42,12 @@ export default function Page() {
   }
 
   return <>{page ? <EditorLayout page={page} /> : <div>Page not found</div>}</>;
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <EditPageContent />
+    </Suspense>
+  );
 }
