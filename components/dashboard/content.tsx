@@ -1,8 +1,8 @@
 import { IDashboardContentProps } from "@/lib/types";
 
 export function Content({
-  setCurrentContent,
   currentContent,
+  contentMap,
 }: IDashboardContentProps) {
-  return <div className="h-full w-full">{currentContent}</div>;
+  return <div className="h-full w-full p-4">{contentMap[currentContent]}</div>;
 }

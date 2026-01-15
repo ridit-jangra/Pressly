@@ -1,14 +1,10 @@
 "use client";
 
 import {
-  IColorOption,
   IComponentChildOption,
   IComponentEditorProps,
   IComponentOption,
   IExtendedComponent,
-  INumberOption,
-  ISelectOption,
-  ITextOption,
 } from "@/lib/types";
 import {
   Collapsible,
@@ -38,7 +34,6 @@ export function ComponentEditor({
   setCurrentSelectedComponent,
   formValues,
   setFormValues,
-  draggableComponents,
   setDraggableComponents,
 }: IComponentEditorProps) {
   if (!currentSelectedComponent) return;

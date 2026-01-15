@@ -16,12 +16,20 @@ export class primaryButton extends Component {
       label: "Styling",
     },
     {
-      id: "padding",
-      label: "Padding",
+      id: "effects",
+      label: "Effects",
     },
     {
-      id: "align",
-      label: "Align",
+      id: "spacing",
+      label: "Spacing",
+    },
+    {
+      id: "border",
+      label: "Border",
+    },
+    {
+      id: "states",
+      label: "States",
     },
   ];
 
@@ -31,28 +39,47 @@ export class primaryButton extends Component {
       options: [
         {
           label: "Font Family",
-          default: "sans-serif",
-          options: ["sans-serif", "sans", "monospace", "serif"],
+          default: "system-ui",
+          options: [
+            "system-ui",
+            "Inter",
+            "Roboto",
+            "sans-serif",
+            "serif",
+            "monospace",
+          ],
           type: "select",
         },
         {
-          label: "Font Style",
-          default: "Regular",
-          options: ["Regular", "Medium", "SemiBold", "Bold", "Black"],
+          label: "Font Weight",
+          default: "SemiBold",
+          options: ["Light", "Regular", "Medium", "SemiBold", "Bold", "Black"],
           type: "select",
         },
         {
           label: "Font Size",
-          default: 16,
-          min: 5,
-          max: 1000,
+          default: 15,
+          min: 8,
+          max: 100,
           type: "number",
         },
-
         {
           label: "Text Content",
-          default: "Primary Button",
+          default: "Get Started",
           type: "text",
+        },
+        {
+          label: "Letter Spacing",
+          default: 0.3,
+          min: -2,
+          max: 10,
+          type: "number",
+        },
+        {
+          label: "Text Transform",
+          default: "None",
+          options: ["None", "Uppercase", "Lowercase", "Capitalize"],
+          type: "select",
         },
       ] as TOption,
     },
@@ -66,15 +93,55 @@ export class primaryButton extends Component {
         },
         {
           label: "Background Color",
-          default: "#000000",
+          default: "#6366F1",
+          type: "color",
+        },
+        {
+          label: "Background Style",
+          default: "Solid",
+          options: ["Solid", "Gradient"],
+          type: "select",
+        },
+        {
+          label: "Gradient Color",
+          default: "#818CF8",
           type: "color",
         },
         {
           label: "Corner Radius",
           min: 0,
-          max: 500,
-          default: 8,
+          max: 100,
+          default: 10,
           type: "number",
+        },
+      ] as TOption,
+    },
+    {
+      parentId: "effects",
+      options: [
+        {
+          label: "Shadow Size",
+          type: "select",
+          default: "Medium",
+          options: ["None", "Small", "Medium", "Large", "XLarge"],
+        },
+        {
+          label: "Shadow Color",
+          default: "#6366F1",
+          type: "color",
+        },
+        {
+          label: "Opacity",
+          default: 100,
+          min: 0,
+          max: 100,
+          type: "number",
+        },
+        {
+          label: "Blur Effect",
+          default: "None",
+          options: ["None", "Subtle", "Medium", "Strong"],
+          type: "select",
         },
       ] as TOption,
     },
@@ -83,61 +150,127 @@ export class primaryButton extends Component {
       options: [
         {
           label: "Width",
-          default: 124,
-          min: 1,
-          max: 1000,
+          default: 160,
+          min: 50,
+          max: 600,
           type: "number",
         },
         {
           label: "Height",
-          default: 62,
-          min: 1,
-          max: 1000,
-          type: "number",
-        },
-      ] as any,
-    },
-    {
-      parentId: "padding",
-      options: [
-        {
-          label: "Padding Left",
-          default: 4,
-          min: 1,
-          max: 1000,
+          default: 48,
+          min: 32,
+          max: 200,
           type: "number",
         },
         {
-          label: "Padding Right",
-          default: 4,
-          min: 1,
-          max: 1000,
+          label: "Min Width",
+          default: 120,
+          min: 0,
+          max: 600,
           type: "number",
         },
         {
-          label: "Padding Top",
-          default: 4,
-          min: 1,
-          max: 1000,
-          type: "number",
-        },
-        {
-          label: "Padding Bottom",
-          default: 4,
-          min: 1,
+          label: "Max Width",
+          default: 400,
+          min: 0,
           max: 1000,
           type: "number",
         },
       ] as TOption,
     },
     {
-      parentId: "align",
+      parentId: "spacing",
       options: [
+        {
+          label: "Padding Horizontal",
+          default: 24,
+          min: 0,
+          max: 100,
+          type: "number",
+        },
+        {
+          label: "Padding Vertical",
+          default: 12,
+          min: 0,
+          max: 100,
+          type: "number",
+        },
         {
           label: "Text Align",
           type: "select",
           default: "Center",
           options: ["Left", "Center", "Right"],
+        },
+        {
+          label: "Gap",
+          default: 8,
+          min: 0,
+          max: 50,
+          type: "number",
+        },
+      ] as TOption,
+    },
+    {
+      parentId: "border",
+      options: [
+        {
+          label: "Border Width",
+          min: 0,
+          max: 10,
+          default: 0,
+          type: "number",
+        },
+        {
+          label: "Border Color",
+          default: "#818CF8",
+          type: "color",
+        },
+        {
+          label: "Border Style",
+          type: "select",
+          default: "Solid",
+          options: ["Solid", "Dashed", "Dotted", "Double"],
+        },
+        {
+          label: "Outline Width",
+          min: 0,
+          max: 10,
+          default: 0,
+          type: "number",
+        },
+        {
+          label: "Outline Color",
+          default: "#A5B4FC",
+          type: "color",
+        },
+      ] as TOption,
+    },
+    {
+      parentId: "states",
+      options: [
+        {
+          label: "Hover Effect",
+          type: "select",
+          default: "Lift",
+          options: ["None", "Darken", "Lighten", "Lift", "Scale", "Glow"],
+        },
+        {
+          label: "Disabled State",
+          type: "select",
+          default: "No",
+          options: ["Yes", "No"],
+        },
+        {
+          label: "Cursor Style",
+          type: "select",
+          default: "Pointer",
+          options: ["Pointer", "Default", "Not-Allowed"],
+        },
+        {
+          label: "Transition Speed",
+          type: "select",
+          default: "Medium",
+          options: ["Fast", "Medium", "Slow"],
         },
       ] as TOption,
     },
@@ -148,86 +281,172 @@ export class primaryButton extends Component {
   }
 
   public update() {
+    const bgStyle = this.state["styling-Background Style"] || "Solid";
+    const bgColor = this.state["styling-Background Color"] || "#6366F1";
+    const gradientColor = this.state["styling-Gradient Color"] || "#818CF8";
+
+    const background =
+      bgStyle === "Gradient"
+        ? `linear-gradient(135deg, ${bgColor}, ${gradientColor})`
+        : bgColor;
+
+    const textTransform = this.state["typography-Text Transform"] || "None";
+    const transformMap: Record<string, string> = {
+      None: "none",
+      Uppercase: "uppercase",
+      Lowercase: "lowercase",
+      Capitalize: "capitalize",
+    };
+
+    const borderStyle = (
+      this.state["border-Border Style"] || "Solid"
+    ).toLowerCase();
+    const transitionSpeed = this.getTransitionSpeed(
+      this.state["states-Transition Speed"] || "Medium"
+    );
+
     const styles: React.CSSProperties = {
-      fontFamily: this.state["typography-Font Family"] || "sans-serif",
+      // Typography
+      fontFamily: this.state["typography-Font Family"] || "system-ui",
       fontWeight: this.getFontWeight(
-        this.state["typography-Font Style"] || "Regular"
+        this.state["typography-Font Weight"] || "SemiBold"
       ),
-      fontSize: `${this.state["typography-Font Size"] || 16}px`,
+      fontSize: `${this.state["typography-Font Size"] || 15}px`,
+      letterSpacing: `${this.state["typography-Letter Spacing"] || 0.3}px`,
+      textTransform: transformMap[textTransform] as any,
       color: this.state["styling-Text Color"] || "#FFFFFF",
-      backgroundColor: this.state["styling-Background Color"] || "#000000",
-      borderRadius: `${this.state["styling-Corner Radius"] || 8}px`,
-      width: `${this.state["dimensions-Width"] || 124}px`,
-      height: `${this.state["dimensions-Height"] || 62}px`,
-      paddingLeft: `${this.state["padding-Padding Left"] || 4}px`,
-      paddingRight: `${this.state["padding-Padding Right"] || 4}px`,
-      paddingTop: `${this.state["padding-Padding Top"] || 4}px`,
-      paddingBottom: `${this.state["padding-Padding Bottom"] || 4}px`,
+
+      // Background & Colors
+      background,
+      borderRadius: `${this.state["styling-Corner Radius"] || 10}px`,
+
+      // Dimensions
+      width: `${this.state["dimensions-Width"] || 160}px`,
+      height: `${this.state["dimensions-Height"] || 48}px`,
+      minWidth: `${this.state["dimensions-Min Width"] || 120}px`,
+      maxWidth: `${this.state["dimensions-Max Width"] || 400}px`,
+
+      // Spacing
+      paddingLeft: `${this.state["spacing-Padding Horizontal"] || 24}px`,
+      paddingRight: `${this.state["spacing-Padding Horizontal"] || 24}px`,
+      paddingTop: `${this.state["spacing-Padding Vertical"] || 12}px`,
+      paddingBottom: `${this.state["spacing-Padding Vertical"] || 12}px`,
+      textAlign: (
+        this.state["spacing-Text Align"] || "Center"
+      ).toLowerCase() as any,
+      gap: `${this.state["spacing-Gap"] || 8}px`,
+
+      // Border
+      border: `${this.state["border-Border Width"] || 0}px ${borderStyle} ${
+        this.state["border-Border Color"] || "#818CF8"
+      }`,
+      outline:
+        this.state["border-Outline Width"] > 0
+          ? `${this.state["border-Outline Width"]}px solid ${
+              this.state["border-Outline Color"] || "#A5B4FC"
+            }`
+          : "none",
+      outlineOffset: "2px",
+
+      // Effects
+      boxShadow: this.getShadow(
+        this.state["effects-Shadow Size"] || "Medium",
+        this.state["effects-Shadow Color"] || "#6366F1"
+      ),
+      opacity: (this.state["effects-Opacity"] || 100) / 100,
+      backdropFilter: this.getBlurEffect(
+        this.state["effects-Blur Effect"] || "None"
+      ),
+
+      // States
+      cursor: (this.state["states-Cursor Style"] || "Pointer").toLowerCase(),
+      transition: `all ${transitionSpeed} cubic-bezier(0.4, 0, 0.2, 1)`,
+
+      // Layout
+      display: "inline-flex",
+      alignItems: "center",
+      justifyContent: "center",
+      userSelect: "none",
+      WebkitUserSelect: "none",
+      position: "relative",
+      overflow: "hidden",
+
+      // Disabled state
+      ...(this.state["states-Disabled State"] === "Yes" && {
+        opacity: 0.5,
+        cursor: "not-allowed",
+        pointerEvents: "none",
+      }),
     };
 
     this.updateAll(
       "button",
-      this.state["typography-Text Content"] || "Primary Button",
+      this.state["typography-Text Content"] || "Get Started",
       [],
       styles
     );
   }
 
   protected handleStateChange(parentId: string, label: string, value: any) {
-    switch (label) {
-      case "Font Family":
-        this.setStyle("fontFamily", value);
-        break;
-      case "Font Style":
-        this.setStyle("fontWeight", this.getFontWeight(value));
-        break;
-      case "Font Size":
-        this.setStyle("fontSize", `${value}px`);
-        break;
-      case "Text Content":
-        this.text = value;
-        break;
-      case "Text Color":
-        this.setStyle("color", value);
-        break;
-      case "Background Color":
-        this.setStyle("backgroundColor", value);
-        break;
-      case "Corner Radius":
-        this.setStyle("borderRadius", `${value}px`);
-        break;
-      case "Width":
-        this.setStyle("width", `${value}px`);
-        break;
-      case "Height":
-        this.setStyle("height", `${value}px`);
-        break;
-      case "Padding Left":
-        this.setStyle("paddingLeft", `${value}px`);
-        break;
-      case "Padding Right":
-        this.setStyle("paddingRight", `${value}px`);
-        break;
-      case "Padding Top":
-        this.setStyle("paddingTop", `${value}px`);
-        break;
-      case "Padding Bottom":
-        this.setStyle("paddingBottom", `${value}px`);
-        break;
-      case "Text Align":
-        this.setStyle("textAlign", value.toLowerCase());
-        break;
-    }
+    // Re-run update to recalculate all styles when any value changes
+    this.update();
   }
 
   private getFontWeight(style: string): number {
     const map: Record<string, number> = {
+      Light: 300,
       Regular: 400,
       Medium: 500,
       SemiBold: 600,
       Bold: 700,
       Black: 900,
     };
-    return map[style] || 400;
+    return map[style] || 600;
+  }
+
+  private getShadow(size: string, color: string): string {
+    const shadowMap: Record<string, string> = {
+      None: "none",
+      Small: `0 1px 2px ${this.hexToRgba(color, 0.15)}`,
+      Medium: `0 4px 6px -1px ${this.hexToRgba(
+        color,
+        0.2
+      )}, 0 2px 4px -1px ${this.hexToRgba(color, 0.1)}`,
+      Large: `0 10px 15px -3px ${this.hexToRgba(
+        color,
+        0.25
+      )}, 0 4px 6px -2px ${this.hexToRgba(color, 0.1)}`,
+      XLarge: `0 20px 25px -5px ${this.hexToRgba(
+        color,
+        0.3
+      )}, 0 10px 10px -5px ${this.hexToRgba(color, 0.15)}`,
+    };
+    return shadowMap[size] || shadowMap.Medium;
+  }
+
+  private getBlurEffect(blur: string): string {
+    const blurMap: Record<string, string> = {
+      None: "none",
+      Subtle: "blur(2px)",
+      Medium: "blur(4px)",
+      Strong: "blur(8px)",
+    };
+    return blurMap[blur] || "none";
+  }
+
+  private getTransitionSpeed(speed: string): string {
+    const speedMap: Record<string, string> = {
+      Fast: "0.15s",
+      Medium: "0.25s",
+      Slow: "0.4s",
+    };
+    return speedMap[speed] || "0.25s";
+  }
+
+  private hexToRgba(hex: string, alpha: number): string {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
   }
 }

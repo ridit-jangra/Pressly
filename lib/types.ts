@@ -61,26 +61,21 @@ export interface IHead {
 }
 
 export interface IBody {
-  text: string;
-  components: IComponent[];
+  components: IExtendedComponent[];
 }
 
 export interface IFooter {
-  text: string;
-  components: IComponent[];
+  components: IExtendedComponent[];
 }
 
-export interface IPostContent {
-  heading: string;
-  body: IComponent[];
-  footer: IFooter;
-}
-
-export interface IPost {
+export interface IPage {
+  id: string;
   title: string;
   head: IHead;
   body: IBody;
   footer: IFooter;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface IActivitybarProps {
@@ -121,6 +116,13 @@ export interface ITitlebarProps {
   setCurrentViewTool: (tool: string) => void;
   setViewTools: (tools: ITitlebarTool[]) => void;
   site: ISite;
+  page: IPage;
+  setPage: (page: IPage) => void;
+  handleSavePage: () => void;
+  pageTitle: string;
+  setPageTitle: (title: string) => void;
+  isSaveDisable: boolean;
+  setIsSaveDisable: (isDisabled: boolean) => void;
 }
 
 export interface ISidebarProps {
@@ -148,6 +150,7 @@ export interface IEditorProps {
   setCurrentSelectedComponent: (component: IExtendedComponent) => void;
   formValues: Record<string, any>;
   dragPreview?: { x: number; y: number } | null;
+  page: IPage;
 }
 
 export interface IDropZoneProps {
@@ -169,6 +172,8 @@ export interface IComponentEditorProps {
   setFormValues: (values: Record<string, any>) => void;
   setDraggableComponents: Function;
   draggableComponents: IExtendedComponent[];
+  setPage: (page: IPage) => void;
+  page: IPage;
 }
 
 export interface IPosition {
@@ -229,8 +234,8 @@ export interface IComponentChildOption {
 }
 
 export interface IDashboardContentProps {
-  currentContent?: JSX.Element;
-  setCurrentContent: (content: JSX.Element) => void;
+  currentContent: string;
+  contentMap: Record<string, JSX.Element>;
 }
 
 export interface INavMainItems {
@@ -251,6 +256,8 @@ export interface IPendingRegistration {
   otp: string;
   otpExpiry: Date;
 }
+
+export interface IAllPagesProps {}
 
 export type TOption =
   | ITextOption[]

@@ -107,11 +107,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarContent className="w-full">
-        <NavMain
-          items={navMainItems}
-          contentMap={props.contentMap}
-          setCurrentContent={props.setCurrentContent}
-        />
+        <NavMain items={navMainItems} />
       </SidebarContent>
       <SidebarFooter>
         {!isLoading && user && <NavUser user={user} />}

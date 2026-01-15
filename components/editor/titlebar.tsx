@@ -1,14 +1,9 @@
 "use client";
 
 import { Tooltip, TooltipContent, TooltipTrigger } from "../shadcn/tooltip";
-import { ISite, ITitlebarProps, ITitlebarTool } from "@/lib/types";
+import { IPage, ITitlebarProps, ITitlebarTool } from "@/lib/types";
 import { useEffect, useState } from "react";
-import {
-  MonitorIcon,
-  SaveIcon,
-  SmartphoneIcon,
-  TabletIcon,
-} from "lucide-react";
+import { MonitorIcon, SmartphoneIcon, TabletIcon } from "lucide-react";
 import { Button } from "../shadcn/button";
 
 export function Titlebar({
@@ -16,7 +11,12 @@ export function Titlebar({
   setViewTools,
   viewTools,
   currentViewTool,
-  site,
+  page,
+  setPage,
+  handleSavePage,
+  pageTitle,
+  setPageTitle,
+  isSaveDisable,
 }: ITitlebarProps) {
   useEffect(() => {
     const tools: ITitlebarTool[] = [
@@ -52,10 +52,27 @@ export function Titlebar({
     setViewTools(tools);
   }, []);
 
+  const handleChangePageTitle = (title: string) => {
+    setPageTitle(title);
+  };
+
+  useEffect(() => {
+    const updatedPage: IPage = {
+      ...page,
+      title: pageTitle,
+    };
+
+    setPage(updatedPage);
+  }, [pageTitle]);
+
   return (
     <div className="flex items-center justify-between h-18 w-[calc(100vw-88px)] px-4 border-b">
       <span className="flex flex-col">
-        <p className="font-medium text-2xl">{site.name}</p>
+        <input
+          className="font-medium text-xl bg-transparent focus:outline-0"
+          value={pageTitle}
+          onChange={(e) => handleChangePageTitle(e.target.value)}
+        />
         <p className="text-sm">Page Editor</p>
       </span>
       <div className="flex bg-muted rounded-lg">
@@ -78,18 +95,9 @@ export function Titlebar({
         ))}
       </div>
       <div className="flex gap-4">
-        <Tooltip>
-          <TooltipTrigger>
-            <Button
-              variant={"ghost"}
-              className={"text-black/60 dark:text-white/60"}
-            >
-              <SaveIcon style={{ width: "20px", height: "auto" }} />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>Save Draft</TooltipContent>
-        </Tooltip>
-        <Button>Publish</Button>
+        <Button onClick={handleSavePage} disabled={isSaveDisable}>
+          Save
+        </Button>
       </div>
     </div>
   );

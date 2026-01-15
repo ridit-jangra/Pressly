@@ -10,6 +10,7 @@ import {
   IExtendedComponent,
   ILayoutComponent,
   ILayoutPage,
+  IPage,
   ISite,
   IUser,
 } from "@/lib/types";
@@ -31,10 +32,15 @@ import {
 import { ComponentEditor } from "./component-editor";
 import { Component } from "../site/component";
 import { AuthService } from "@/lib/authService";
+import { Storage } from "@/lib/storage";
+import { toast } from "sonner";
 
-export function Layout() {
+export function EditorLayout({ page: InitPage }: { page: IPage }) {
   const [site, setSite] = useState<ISite | null>(null);
   const [user, setUser] = useState<IUser | null>(null);
+  const [page, setPage] = useState<IPage>(InitPage);
+  const [isSaveDisable, setIsSaveDisabled] = useState<boolean>(true);
+  const [pageTitle, setPageTitle] = useState<string>(page.title);
   const [cursorTools, setCursorTools] = useState<IActivitybarTool[]>([]);
   const [currentCursorTool, setCurrentCursorTool] = useState<string>();
   const [viewTools, setViewTools] = useState<IActivitybarTool[]>([]);
@@ -63,7 +69,7 @@ export function Layout() {
 
     if (!over) return;
 
-    setDraggableComponents((prev) => {
+    setDraggableComponents((prev: IExtendedComponent[]) => {
       const existingItem = prev.find((item) => item.instanceId === active.id);
 
       if (existingItem) {
@@ -134,6 +140,10 @@ export function Layout() {
   }, []);
 
   useEffect(() => {
+    setIsSaveDisabled(false);
+  }, [pageTitle, draggableComponents, formValues]);
+
+  useEffect(() => {
     const getUser = async () => {
       const v = await AuthService.getCurrentUser();
       setUser(v!);
@@ -141,6 +151,118 @@ export function Layout() {
 
     getUser();
   }, []);
+
+  const formatDate = (date: Date): string => {
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const year = String(date.getFullYear()).slice(-2);
+    return `${month}/${day}/${year}`;
+  };
+
+  // Updated useEffect to reconstruct components from saved data
+  useEffect(() => {
+    if (InitPage.body?.components && Array.isArray(InitPage.body.components)) {
+      const reconstructedComponents = InitPage.body.components
+        .map((savedComp: any) => {
+          // Find the component definition from your components array
+          const componentDef = components.find((c) => c.id === savedComp.id);
+
+          if (componentDef) {
+            // Create a new instance of the component class
+            const ComponentClass = componentDef.content.node
+              .constructor as new () => Component;
+            const newNode = new ComponentClass();
+
+            // Apply the saved state to the component
+            newNode.applyState(savedComp.state || {});
+
+            // Optionally restore visual properties if they were saved
+            if (savedComp.componentData) {
+              newNode.tag = savedComp.componentData.tag;
+              newNode.text = savedComp.componentData.text;
+              newNode.classes = savedComp.componentData.classes;
+              newNode.styles = savedComp.componentData.styles;
+              newNode.code = savedComp.componentData.code;
+            }
+
+            return {
+              id: savedComp.id,
+              instanceId: savedComp.instanceId,
+              label: savedComp.label,
+              content: { node: newNode },
+              inZone: savedComp.inZone,
+              position: savedComp.position,
+              state: savedComp.state,
+            } as IExtendedComponent;
+          }
+
+          return null;
+        })
+        .filter(Boolean) as IExtendedComponent[];
+
+      setDraggableComponents(reconstructedComponents);
+    }
+  }, [InitPage, components]);
+
+  // Updated handleSavePage method for EditorLayout component
+
+  const handleSavePage = async () => {
+    try {
+      const existingPages = (await Storage.getItem("pages", "pages")) as
+        | IPage[]
+        | null;
+
+      if (!existingPages || !Array.isArray(existingPages)) {
+        toast.error("Error: Could not retrieve pages");
+        return;
+      }
+
+      // Serialize components - save everything needed to reconstruct them
+      const serializedComponents = draggableComponents.map((comp) => ({
+        id: comp.id,
+        instanceId: comp.instanceId,
+        label: comp.label,
+        inZone: comp.inZone,
+        position: comp.position,
+        state: comp.state,
+        // Store the component's current visual properties
+        componentData: {
+          tag: comp.content.node.tag,
+          text: comp.content.node.text,
+          classes: comp.content.node.classes,
+          styles: comp.content.node.styles,
+          code: comp.content.node.code,
+        },
+      }));
+
+      const updatedPage: IPage = {
+        ...page,
+        title: pageTitle,
+        head: {
+          ...page.head,
+          title: pageTitle,
+        },
+        updatedAt: formatDate(new Date()),
+        body: {
+          components: serializedComponents as any,
+        },
+      };
+
+      const updatedPages = existingPages.map((p) =>
+        p.id === updatedPage.id ? updatedPage : p
+      );
+
+      await Storage.setItem("pages", "pages", updatedPages);
+
+      setPage(updatedPage);
+      setIsSaveDisabled(true);
+
+      toast.success("Page saved successfully.");
+    } catch (err) {
+      console.error("Save error:", err);
+      toast.error(`Error saving page: ${err}`);
+    }
+  };
 
   return (
     <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
@@ -159,7 +281,14 @@ export function Layout() {
               setViewTools={setViewTools}
               currentViewTool={currentViewTool}
               setCurrentViewTool={setCurrentViewTool}
+              page={page}
+              setPage={setPage}
               site={site}
+              handleSavePage={handleSavePage}
+              pageTitle={pageTitle}
+              setPageTitle={setPageTitle}
+              isSaveDisable={isSaveDisable}
+              setIsSaveDisable={setIsSaveDisabled}
             />
             <ResizablePanelGroup
               direction="horizontal"
@@ -185,6 +314,7 @@ export function Layout() {
                   currentSelectedComponent={currentSelectedComponent}
                   setCurrentSelectedComponent={setCurrentSelectedComponents}
                   formValues={formValues}
+                  page={page}
                 />
               </ResizablePanel>
               {currentSelectedComponent && (
@@ -198,6 +328,8 @@ export function Layout() {
                       setFormValues={setFormValues}
                       setDraggableComponents={setDraggableComponents}
                       draggableComponents={draggableComponents}
+                      setPage={setPage}
+                      page={page}
                     />
                   </ResizablePanel>
                 </>

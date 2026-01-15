@@ -18,11 +18,10 @@ import {
   SidebarMenuSubItem,
 } from "../shadcn/sidebar";
 import { JSX } from "react";
+import { useRouter } from "next/navigation";
 
 export function NavMain({
   items,
-  setCurrentContent,
-  contentMap,
 }: {
   items: {
     title: string;
@@ -34,13 +33,11 @@ export function NavMain({
       url: string;
     }[];
   }[];
-  setCurrentContent: (content: JSX.Element) => void;
-  contentMap: Record<string, JSX.Element>;
 }) {
-  const handleSetContent = (subItem: { title: string; url: string }) => {
-    const content = contentMap[subItem.url];
+  const router = useRouter();
 
-    setCurrentContent(content);
+  const handleSetContent = (subItem: { title: string; url: string }) => {
+    router.replace(`/dashboard?page=${subItem.url}`);
   };
 
   return (

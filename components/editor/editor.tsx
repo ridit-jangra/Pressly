@@ -18,6 +18,7 @@ export function Editor({
   currentSelectedComponent,
   formValues,
   setDraggableComponents,
+  page,
 }: IEditorProps) {
   const [itemsInZone, setItemsInZone] = useState<IExtendedComponent[]>([]);
 
