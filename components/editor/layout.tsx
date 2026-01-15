@@ -10,6 +10,8 @@ import {
   IExtendedComponent,
   ILayoutComponent,
   ILayoutPage,
+  ISite,
+  IUser,
 } from "@/lib/types";
 import { Titlebar } from "./titlebar";
 import {
@@ -28,8 +30,11 @@ import {
 } from "@dnd-kit/core";
 import { ComponentEditor } from "./component-editor";
 import { Component } from "../site/component";
+import { AuthService } from "@/lib/authService";
 
 export function Layout() {
+  const [site, setSite] = useState<ISite | null>(null);
+  const [user, setUser] = useState<IUser | null>(null);
   const [cursorTools, setCursorTools] = useState<IActivitybarTool[]>([]);
   const [currentCursorTool, setCurrentCursorTool] = useState<string>();
   const [viewTools, setViewTools] = useState<IActivitybarTool[]>([]);
@@ -112,73 +117,95 @@ export function Layout() {
 
   useEffect(() => {
     if (cursorTools && cursorTools.length > 0)
-      setCurrentCursorTool(cursorTools[0].id);
+      setCurrentCursorTool(cursorTools[1].id);
   }, [cursorTools]);
 
   useEffect(() => {
     if (viewTools && viewTools.length > 0) setCurrentViewTool(viewTools[0].id);
   }, [viewTools]);
 
+  useEffect(() => {
+    const getSite = async () => {
+      const v = await AuthService.getSiteData();
+      setSite(v);
+    };
+
+    getSite();
+  }, []);
+
+  useEffect(() => {
+    const getUser = async () => {
+      const v = await AuthService.getCurrentUser();
+      setUser(v!);
+    };
+
+    getUser();
+  }, []);
+
   return (
     <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
-      <div className="flex min-h-screen w-full bg-background">
-        <ActivityBar
-          cursorTools={cursorTools}
-          setCursorTools={setCursorTools}
-          currentCursorTool={currentCursorTool}
-          setCurrentCursorTool={setCurrentCursorTool}
-        />
-        <div className="flex flex-col w-full">
-          <Titlebar
-            viewTools={viewTools}
-            setViewTools={setViewTools}
-            currentViewTool={currentViewTool}
-            setCurrentViewTool={setCurrentViewTool}
+      {site && user && (
+        <div className="flex min-h-screen w-full bg-background">
+          <ActivityBar
+            cursorTools={cursorTools}
+            setCursorTools={setCursorTools}
+            currentCursorTool={currentCursorTool}
+            setCurrentCursorTool={setCurrentCursorTool}
+            user={user}
           />
-          <ResizablePanelGroup
-            direction="horizontal"
-            className="h-[calc(100vh-72px)]"
-          >
-            <ResizablePanel defaultSize={25} minSize={15} maxSize={35}>
-              <Sidebar
-                components={components}
-                setComponents={setComponents}
-                componentsPages={componentsPages}
-                setComponentsPages={setComponentsPages}
-                layouts={layouts}
-                setLayouts={setLayouts}
-                layoutsPages={layoutsPages}
-                setLayoutsPages={setLayoutsPages}
-              />
-            </ResizablePanel>
-            <ResizableHandle />
-            <ResizablePanel defaultSize={currentSelectedComponent ? 50 : 75}>
-              <Editor
-                draggableComponents={draggableComponents}
-                setDraggableComponents={setDraggableComponents}
-                currentSelectedComponent={currentSelectedComponent}
-                setCurrentSelectedComponent={setCurrentSelectedComponents}
-                formValues={formValues}
-              />
-            </ResizablePanel>
-            {currentSelectedComponent && (
-              <>
-                <ResizableHandle />
-                <ResizablePanel defaultSize={25} minSize={15} maxSize={35}>
-                  <ComponentEditor
-                    currentSelectedComponent={currentSelectedComponent}
-                    setCurrentSelectedComponent={setCurrentSelectedComponents}
-                    formValues={formValues}
-                    setFormValues={setFormValues}
-                    setDraggableComponents={setDraggableComponents}
-                    draggableComponents={draggableComponents}
-                  />
-                </ResizablePanel>
-              </>
-            )}
-          </ResizablePanelGroup>
+          <div className="flex flex-col w-full">
+            <Titlebar
+              viewTools={viewTools}
+              setViewTools={setViewTools}
+              currentViewTool={currentViewTool}
+              setCurrentViewTool={setCurrentViewTool}
+              site={site}
+            />
+            <ResizablePanelGroup
+              direction="horizontal"
+              className="h-[calc(100vh-72px)]"
+            >
+              <ResizablePanel defaultSize={25} minSize={15} maxSize={35}>
+                <Sidebar
+                  components={components}
+                  setComponents={setComponents}
+                  componentsPages={componentsPages}
+                  setComponentsPages={setComponentsPages}
+                  layouts={layouts}
+                  setLayouts={setLayouts}
+                  layoutsPages={layoutsPages}
+                  setLayoutsPages={setLayoutsPages}
+                />
+              </ResizablePanel>
+              <ResizableHandle />
+              <ResizablePanel defaultSize={currentSelectedComponent ? 50 : 75}>
+                <Editor
+                  draggableComponents={draggableComponents}
+                  setDraggableComponents={setDraggableComponents}
+                  currentSelectedComponent={currentSelectedComponent}
+                  setCurrentSelectedComponent={setCurrentSelectedComponents}
+                  formValues={formValues}
+                />
+              </ResizablePanel>
+              {currentSelectedComponent && (
+                <>
+                  <ResizableHandle />
+                  <ResizablePanel defaultSize={25} minSize={15} maxSize={35}>
+                    <ComponentEditor
+                      currentSelectedComponent={currentSelectedComponent}
+                      setCurrentSelectedComponent={setCurrentSelectedComponents}
+                      formValues={formValues}
+                      setFormValues={setFormValues}
+                      setDraggableComponents={setDraggableComponents}
+                      draggableComponents={draggableComponents}
+                    />
+                  </ResizablePanel>
+                </>
+              )}
+            </ResizablePanelGroup>
+          </div>
         </div>
-      </div>
+      )}
     </DndContext>
   );
 }

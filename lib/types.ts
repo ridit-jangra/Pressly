@@ -7,6 +7,8 @@ export interface IUser {
   email: string;
   password: string;
   isCompletedSetup: boolean;
+  id: string;
+  isVerified?: boolean;
 }
 
 export interface ISite {
@@ -86,6 +88,7 @@ export interface IActivitybarProps {
   currentCursorTool?: string;
   setCurrentCursorTool: (tool: string) => void;
   setCursorTools: (tools: IActivitybarTool[]) => void;
+  user: IUser;
 }
 
 export interface IActivitybarTool {
@@ -117,6 +120,7 @@ export interface ITitlebarProps {
   currentViewTool?: string;
   setCurrentViewTool: (tool: string) => void;
   setViewTools: (tools: ITitlebarTool[]) => void;
+  site: ISite;
 }
 
 export interface ISidebarProps {
@@ -222,6 +226,30 @@ export interface IComponentOption {
 export interface IComponentChildOption {
   parentId: string;
   options: ISelectOption[] | INumberOption[] | ITextOption[] | IColorOption[];
+}
+
+export interface IDashboardContentProps {
+  currentContent?: JSX.Element;
+  setCurrentContent: (content: JSX.Element) => void;
+}
+
+export interface INavMainItems {
+  title: string;
+  url: string;
+  icon: LucideIcon;
+  isActive?: boolean;
+  items?: {
+    title: string;
+    url: string;
+  }[];
+}
+
+export interface IPendingRegistration {
+  name: string;
+  email: string;
+  password: string;
+  otp: string;
+  otpExpiry: Date;
 }
 
 export type TOption =

@@ -2,8 +2,10 @@ import {
   IActivitybarProps,
   IActivitybarOption,
   IActivitybarTool,
+  IUser,
 } from "@/lib/types";
 import {
+  ArrowLeftIcon,
   MousePointer2Icon,
   SettingsIcon,
   TextCursorIcon,
@@ -11,15 +13,18 @@ import {
 } from "lucide-react";
 import { Tooltip, TooltipTrigger, TooltipContent } from "../shadcn/tooltip";
 import { Button } from "../shadcn/button";
-import { user } from "@/data/sample/user";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export function ActivityBar({
   cursorTools,
   setCursorTools,
   currentCursorTool,
   setCurrentCursorTool,
+  user,
 }: IActivitybarProps) {
+  const router = useRouter();
+
   const [options, setOptions] = useState<IActivitybarOption[]>([
     {
       id: "settings",
@@ -30,15 +35,24 @@ export function ActivityBar({
     },
     {
       id: "profile",
-      title: user.name,
+      title: user!.name,
       icon: UserIcon,
-      description: user.name,
-      tooltip: user.name,
+      description: user!.name,
+      tooltip: user!.name,
     },
   ]);
 
   useEffect(() => {
     const tools: IActivitybarTool[] = [
+      {
+        id: "go-back",
+        icon: ArrowLeftIcon,
+        name: "Go Back",
+        onClick: () => {
+          router.back();
+        },
+        tooltip: "Go Back",
+      },
       {
         id: "select-tool",
         icon: MousePointer2Icon,

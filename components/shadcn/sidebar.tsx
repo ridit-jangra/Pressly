@@ -155,11 +155,17 @@ function Sidebar({
   collapsible = "offExamples",
   className,
   children,
+  currentContent,
+  setCurrentContent,
+  contentMap,
   ...props
 }: React.ComponentProps<"div"> & {
   side?: "left" | "right";
   variant?: "sidebar" | "floating" | "inset";
   collapsible?: "offExamples" | "icon" | "none";
+  currentContent?: React.JSX.Element;
+  setCurrentContent: (content: React.JSX.Element) => void;
+  contentMap: Record<string, React.JSX.Element>;
 }) {
   const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
 

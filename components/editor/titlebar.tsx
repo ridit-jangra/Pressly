@@ -1,9 +1,8 @@
 "use client";
 
-import { site } from "@/data/sample/user";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../shadcn/tooltip";
-import { ITitlebarProps, ITitlebarTool } from "@/lib/types";
-import { useEffect } from "react";
+import { ISite, ITitlebarProps, ITitlebarTool } from "@/lib/types";
+import { useEffect, useState } from "react";
 import {
   MonitorIcon,
   SaveIcon,
@@ -17,6 +16,7 @@ export function Titlebar({
   setViewTools,
   viewTools,
   currentViewTool,
+  site,
 }: ITitlebarProps) {
   useEffect(() => {
     const tools: ITitlebarTool[] = [
