@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { ActivityBar } from "./activitybar";
 import {
   IActivitybarTool,
@@ -8,6 +8,7 @@ import {
   IComponentPage,
   IComponentState,
   IExtendedComponent,
+  IExtendedLayout,
   ILayoutComponent,
   ILayoutPage,
   IPage,
@@ -34,6 +35,7 @@ import { Component } from "../site/component";
 import { AuthService } from "@/lib/authService";
 import { Storage } from "@/lib/storage";
 import { toast } from "sonner";
+import { LayoutComponentBase } from "../site/layoutComponent";
 
 export function EditorLayout({ page: InitPage }: { page: IPage }) {
   const [site, setSite] = useState<ISite | null>(null);
@@ -47,14 +49,26 @@ export function EditorLayout({ page: InitPage }: { page: IPage }) {
   const [currentViewTool, setCurrentViewTool] = useState<string>();
   const [components, setComponents] = useState<IComponent[]>([]);
   const [componentsPages, setComponentsPages] = useState<IComponentPage[]>([]);
-  const [layouts, setLayouts] = useState<ILayoutComponent[]>([]);
+  const [layoutComponents, setLayoutComponents] = useState<ILayoutComponent[]>(
+    []
+  );
+  const [layouts, setLayouts] = useState<IExtendedLayout[]>([]);
   const [layoutsPages, setLayoutsPages] = useState<ILayoutPage[]>([]);
   const [currentSelectedComponent, setCurrentSelectedComponents] =
-    useState<IExtendedComponent>();
+    useState<IExtendedComponent | null>(null);
+  const [currentSelectedLayout, setCurrentSelectedLayout] =
+    useState<IExtendedLayout | null>(null);
   const [draggableComponents, setDraggableComponents] = useState<
     IExtendedComponent[]
   >([]);
   const [formValues, setFormValues] = useState<Record<string, any>>({});
+
+  // Canvas transform state
+  const [scale, setScale] = useState(1);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isPanning, setIsPanning] = useState(false);
+  const [startPan, setStartPan] = useState({ x: 0, y: 0 });
+  const canvasRef = useRef<HTMLDivElement>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -65,61 +79,140 @@ export function EditorLayout({ page: InitPage }: { page: IPage }) {
   );
 
   function handleDragEnd(event: DragEndEvent) {
-    const { active, over, delta } = event;
+    const { active, over } = event;
 
     if (!over) return;
 
-    setDraggableComponents((prev: IExtendedComponent[]) => {
-      const existingItem = prev.find((item) => item.instanceId === active.id);
+    const overId = String(over.id);
 
-      if (existingItem) {
-        return prev.map((item) => {
-          if (item.instanceId === active.id && item.position) {
-            return {
-              ...item,
-              position: {
-                x: item.position.x + delta.x,
-                y: item.position.y + delta.y,
-              },
-            };
-          }
-          return item;
-        });
-      } else {
-        const component = components.find((c) => c.id === active.id);
-        if (component && over.id === "component-zone") {
-          const ComponentClass = component.content.node
-            .constructor as new () => Component;
-          const newNode = new ComponentClass();
+    // Check if dropping a layout onto the main zone
+    if (overId === "component-zone") {
+      const layout = layoutComponents.find((l) => l.id === active.id);
 
-          const initialState: IComponentState = {};
-          newNode.childOptions?.forEach((child) => {
-            child.options.forEach((option) => {
-              const key = `${child.parentId}-${option.label}`;
-              initialState[key] = option.default ?? "";
-            });
+      if (layout) {
+        const LayoutClass = layout.content.node
+          .constructor as new () => LayoutComponentBase;
+        const newLayoutInstance = new LayoutClass();
+
+        const initialState: any = {};
+        newLayoutInstance.childOptions?.forEach((child) => {
+          child.options.forEach((option) => {
+            const key = `${child.parentId}-${option.label}`;
+            initialState[key] = option.default ?? "";
           });
+        });
 
-          newNode.applyState(initialState);
+        newLayoutInstance.applyState(initialState);
 
-          const instanceId = `${component.id}-${Date.now()}`;
+        const layoutInstanceId = `layout-${Date.now()}`;
 
-          const newComponent: IExtendedComponent = {
-            id: component.id,
-            instanceId: instanceId,
-            label: component.label,
-            content: { node: newNode },
-            inZone: true,
-            position: { x: delta.x, y: delta.y },
-            state: initialState,
-          };
-          return [...prev, newComponent];
-        }
+        const newLayout: IExtendedLayout = {
+          id: layout.id,
+          instanceId: layoutInstanceId,
+          type: layout.id,
+          name: layout.label,
+          layout: newLayoutInstance,
+          position: layouts.length,
+          components: {},
+          state: initialState,
+        };
+
+        setLayouts((prev) => [...prev, newLayout]);
+        return;
       }
+    }
 
-      return prev;
-    });
+    // Check if dropping a component into a layout zone
+    if (overId.includes("-zone-")) {
+      const parts = overId.split("-zone-");
+      const layoutInstanceId = parts[0];
+      const zoneIndex = parts[1];
+
+      const component = components.find((c) => c.id === active.id);
+      if (component) {
+        const ComponentClass = component.content.node
+          .constructor as new () => Component;
+        const newNode = new ComponentClass();
+
+        const initialState: IComponentState = {};
+        newNode.childOptions?.forEach((child) => {
+          child.options.forEach((option) => {
+            const key = `${child.parentId}-${option.label}`;
+            initialState[key] = option.default ?? "";
+          });
+        });
+
+        newNode.applyState(initialState);
+
+        const instanceId = `${component.id}-${Date.now()}`;
+
+        const newComponent: IExtendedComponent = {
+          id: component.id,
+          instanceId: instanceId,
+          label: component.label,
+          content: { node: newNode },
+          inZone: true,
+          position: null,
+          state: initialState,
+        };
+
+        setLayouts((prev) =>
+          prev.map((layout) => {
+            if (layout.instanceId === layoutInstanceId) {
+              const zoneKey = `zone-${zoneIndex}`;
+              return {
+                ...layout,
+                components: {
+                  ...layout.components,
+                  [zoneKey]: [
+                    ...(layout.components[zoneKey] || []),
+                    newComponent,
+                  ],
+                },
+              };
+            }
+            return layout;
+          })
+        );
+      }
+    }
   }
+
+  // Canvas pan and zoom handlers
+  const handleWheel = (e: React.WheelEvent) => {
+    if (e.ctrlKey || e.metaKey) {
+      e.preventDefault();
+      const delta = -e.deltaY * 0.001;
+      const newScale = Math.min(Math.max(0.1, scale + delta), 3);
+      setScale(newScale);
+    }
+  };
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    if (e.button === 1 || (e.button === 0 && e.shiftKey)) {
+      e.preventDefault();
+      setIsPanning(true);
+      setStartPan({ x: e.clientX - position.x, y: e.clientY - position.y });
+    }
+  };
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (isPanning) {
+      setPosition({
+        x: e.clientX - startPan.x,
+        y: e.clientY - startPan.y,
+      });
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsPanning(false);
+  };
+
+  const resetView = () => {
+    setScale(1);
+    setPosition({ x: 0, y: 0 });
+  };
 
   useEffect(() => {
     if (cursorTools && cursorTools.length > 0)
@@ -141,7 +234,7 @@ export function EditorLayout({ page: InitPage }: { page: IPage }) {
 
   useEffect(() => {
     setIsSaveDisabled(false);
-  }, [pageTitle, draggableComponents, formValues]);
+  }, [pageTitle, layouts, formValues]);
 
   useEffect(() => {
     const getUser = async () => {
@@ -159,52 +252,72 @@ export function EditorLayout({ page: InitPage }: { page: IPage }) {
     return `${month}/${day}/${year}`;
   };
 
-  // Updated useEffect to reconstruct components from saved data
   useEffect(() => {
-    if (InitPage.body?.components && Array.isArray(InitPage.body.components)) {
-      const reconstructedComponents = InitPage.body.components
-        .map((savedComp: any) => {
-          // Find the component definition from your components array
-          const componentDef = components.find((c) => c.id === savedComp.id);
+    if (
+      InitPage.body?.components &&
+      Array.isArray(InitPage.body.components) &&
+      layoutComponents.length > 0
+    ) {
+      const reconstructedLayouts = InitPage.body.components
+        .map((savedLayout: any) => {
+          const layoutDef = layoutComponents.find(
+            (l) => l.id === savedLayout.id
+          );
 
-          if (componentDef) {
-            // Create a new instance of the component class
-            const ComponentClass = componentDef.content.node
-              .constructor as new () => Component;
-            const newNode = new ComponentClass();
+          if (layoutDef) {
+            const LayoutClass = layoutDef.content.node
+              .constructor as new () => LayoutComponentBase;
+            const newLayoutInstance = new LayoutClass();
+            newLayoutInstance.applyState(savedLayout.state || {});
 
-            // Apply the saved state to the component
-            newNode.applyState(savedComp.state || {});
+            const reconstructedComponents: {
+              [key: string]: IExtendedComponent[];
+            } = {};
+            Object.keys(savedLayout.components || {}).forEach((zoneKey) => {
+              reconstructedComponents[zoneKey] = savedLayout.components[zoneKey]
+                .map((savedComp: any) => {
+                  const componentDef = components.find(
+                    (c) => c.id === savedComp.id
+                  );
+                  if (componentDef) {
+                    const ComponentClass = componentDef.content.node
+                      .constructor as new () => Component;
+                    const newNode = new ComponentClass();
+                    newNode.applyState(savedComp.state || {});
 
-            // Optionally restore visual properties if they were saved
-            if (savedComp.componentData) {
-              newNode.tag = savedComp.componentData.tag;
-              newNode.text = savedComp.componentData.text;
-              newNode.classes = savedComp.componentData.classes;
-              newNode.styles = savedComp.componentData.styles;
-              newNode.code = savedComp.componentData.code;
-            }
+                    return {
+                      id: savedComp.id,
+                      instanceId: savedComp.instanceId,
+                      label: savedComp.label,
+                      content: { node: newNode },
+                      inZone: true,
+                      position: null,
+                      state: savedComp.state,
+                    } as IExtendedComponent;
+                  }
+                  return null;
+                })
+                .filter(Boolean);
+            });
 
             return {
-              id: savedComp.id,
-              instanceId: savedComp.instanceId,
-              label: savedComp.label,
-              content: { node: newNode },
-              inZone: savedComp.inZone,
-              position: savedComp.position,
-              state: savedComp.state,
-            } as IExtendedComponent;
+              id: savedLayout.id,
+              instanceId: savedLayout.instanceId,
+              type: savedLayout.type,
+              name: savedLayout.name,
+              layout: newLayoutInstance,
+              position: savedLayout.position,
+              components: reconstructedComponents,
+              state: savedLayout.state,
+            } as IExtendedLayout;
           }
-
           return null;
         })
-        .filter(Boolean) as IExtendedComponent[];
+        .filter(Boolean) as IExtendedLayout[];
 
-      setDraggableComponents(reconstructedComponents);
+      setLayouts(reconstructedLayouts);
     }
-  }, [InitPage, components]);
-
-  // Updated handleSavePage method for EditorLayout component
+  }, [InitPage, components, layoutComponents]);
 
   const handleSavePage = async () => {
     try {
@@ -217,22 +330,36 @@ export function EditorLayout({ page: InitPage }: { page: IPage }) {
         return;
       }
 
-      // Serialize components - save everything needed to reconstruct them
-      const serializedComponents = draggableComponents.map((comp) => ({
-        id: comp.id,
-        instanceId: comp.instanceId,
-        label: comp.label,
-        inZone: comp.inZone,
-        position: comp.position,
-        state: comp.state,
-        // Store the component's current visual properties
-        componentData: {
-          tag: comp.content.node.tag,
-          text: comp.content.node.text,
-          classes: comp.content.node.classes,
-          styles: comp.content.node.styles,
-          code: comp.content.node.code,
+      const serializedLayouts = layouts.map((layout) => ({
+        id: layout.id,
+        instanceId: layout.instanceId,
+        type: layout.type,
+        name: layout.name,
+        position: layout.position,
+        state: layout.state,
+        layoutData: {
+          gap: layout.layout.gap,
+          padding: layout.layout.padding,
+          backgroundColor: layout.layout.backgroundColor,
+          borderRadius: layout.layout.borderRadius,
+          minHeight: layout.layout.minHeight,
         },
+        components: Object.keys(layout.components).reduce((acc, zoneKey) => {
+          acc[zoneKey] = layout.components[zoneKey].map((comp) => ({
+            id: comp.id,
+            instanceId: comp.instanceId,
+            label: comp.label,
+            state: comp.state,
+            componentData: {
+              tag: comp.content.node.tag,
+              text: comp.content.node.text,
+              classes: comp.content.node.classes,
+              styles: comp.content.node.styles,
+              code: comp.content.node.code,
+            },
+          }));
+          return acc;
+        }, {} as any),
       }));
 
       const updatedPage: IPage = {
@@ -244,7 +371,7 @@ export function EditorLayout({ page: InitPage }: { page: IPage }) {
         },
         updatedAt: formatDate(new Date()),
         body: {
-          components: serializedComponents as any,
+          components: serializedLayouts as any,
         },
       };
 
@@ -263,6 +390,8 @@ export function EditorLayout({ page: InitPage }: { page: IPage }) {
       toast.error(`Error saving page: ${err}`);
     }
   };
+
+  const hasSelection = currentSelectedComponent || currentSelectedLayout;
 
   return (
     <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
@@ -300,34 +429,94 @@ export function EditorLayout({ page: InitPage }: { page: IPage }) {
                   setComponents={setComponents}
                   componentsPages={componentsPages}
                   setComponentsPages={setComponentsPages}
-                  layouts={layouts}
-                  setLayouts={setLayouts}
+                  layouts={layoutComponents}
+                  setLayouts={setLayoutComponents}
                   layoutsPages={layoutsPages}
                   setLayoutsPages={setLayoutsPages}
                 />
               </ResizablePanel>
               <ResizableHandle />
-              <ResizablePanel defaultSize={currentSelectedComponent ? 50 : 75}>
-                <Editor
-                  draggableComponents={draggableComponents}
-                  setDraggableComponents={setDraggableComponents}
-                  currentSelectedComponent={currentSelectedComponent}
-                  setCurrentSelectedComponent={setCurrentSelectedComponents}
-                  formValues={formValues}
-                  page={page}
-                />
+              <ResizablePanel defaultSize={hasSelection ? 50 : 75}>
+                <div className="relative h-full w-full bg-gray-100">
+                  <div className="absolute top-4 right-4 z-10 flex gap-2 bg-white rounded-lg shadow-lg p-2">
+                    <button
+                      onClick={() => setScale(Math.min(scale + 0.1, 3))}
+                      className="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded"
+                      title="Zoom In"
+                    >
+                      +
+                    </button>
+                    <span className="px-3 py-1 text-sm">
+                      {Math.round(scale * 100)}%
+                    </span>
+                    <button
+                      onClick={() => setScale(Math.max(scale - 0.1, 0.1))}
+                      className="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded"
+                      title="Zoom Out"
+                    >
+                      -
+                    </button>
+                    <button
+                      onClick={resetView}
+                      className="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded"
+                      title="Reset View"
+                    >
+                      Reset
+                    </button>
+                  </div>
+
+                  <div
+                    ref={canvasRef}
+                    className="h-full w-full max-h-[calc(100vh-72px)] overflow-hidden"
+                    onWheel={handleWheel}
+                    onMouseDown={handleMouseDown}
+                    onMouseMove={handleMouseMove}
+                    onMouseUp={handleMouseUp}
+                    onMouseLeave={handleMouseUp}
+                    style={{ cursor: isPanning ? "grabbing" : "grab" }}
+                  >
+                    <div
+                      style={{
+                        transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
+                        transformOrigin: "0 0",
+                        transition: isPanning
+                          ? "none"
+                          : "transform 0.1s ease-out",
+                      }}
+                    >
+                      <Editor
+                        draggableComponents={draggableComponents}
+                        setDraggableComponents={setDraggableComponents}
+                        currentSelectedComponent={currentSelectedComponent}
+                        setCurrentSelectedComponent={
+                          setCurrentSelectedComponents
+                        }
+                        currentSelectedLayout={currentSelectedLayout}
+                        setCurrentSelectedLayout={setCurrentSelectedLayout}
+                        formValues={formValues}
+                        page={page}
+                        layouts={layouts}
+                        setLayouts={setLayouts}
+                      />
+                    </div>
+                  </div>
+                </div>
               </ResizablePanel>
-              {currentSelectedComponent && (
+              {hasSelection && (
                 <>
                   <ResizableHandle />
                   <ResizablePanel defaultSize={25} minSize={15} maxSize={35}>
                     <ComponentEditor
                       currentSelectedComponent={currentSelectedComponent}
                       setCurrentSelectedComponent={setCurrentSelectedComponents}
+                      currentSelectedLayout={currentSelectedLayout}
+                      setCurrentSelectedLayout={setCurrentSelectedLayout}
                       formValues={formValues}
                       setFormValues={setFormValues}
                       setDraggableComponents={setDraggableComponents}
                       draggableComponents={draggableComponents}
+                      layouts={layouts}
+                      setLayouts={setLayouts}
                       setPage={setPage}
                       page={page}
                     />

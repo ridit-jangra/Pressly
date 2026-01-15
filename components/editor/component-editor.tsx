@@ -5,6 +5,8 @@ import {
   IComponentEditorProps,
   IComponentOption,
   IExtendedComponent,
+  IExtendedLayout,
+  IPage,
 } from "@/lib/types";
 import {
   Collapsible,
@@ -28,41 +30,67 @@ import { Label } from "../shadcn/label";
 import { Component } from "../site/component";
 import { ScrollArea } from "../shadcn/scroll-area";
 import ColorPicker from "../shadcn/color-picker";
+import { LayoutComponentBase } from "../site/layoutComponent";
 
 export function ComponentEditor({
   currentSelectedComponent,
   setCurrentSelectedComponent,
+  currentSelectedLayout,
+  setCurrentSelectedLayout,
   formValues,
   setFormValues,
   setDraggableComponents,
+  draggableComponents,
+  layouts,
+  setLayouts,
 }: IComponentEditorProps) {
-  if (!currentSelectedComponent) return;
-
   const [options, setOptions] = useState<IComponentOption[]>();
   const [childOptions, setChildOptions] = useState<IComponentChildOption[]>();
+  const [isLayout, setIsLayout] = useState(false);
 
   useEffect(() => {
-    if (!currentSelectedComponent) return;
+    if (currentSelectedLayout) {
+      setIsLayout(true);
+      setOptions(currentSelectedLayout.layout.editOptions);
+      setChildOptions(currentSelectedLayout.layout.childOptions);
 
-    setOptions(currentSelectedComponent.content.node.editOptions);
-    setChildOptions(currentSelectedComponent.content.node.childOptions);
-
-    if (
-      currentSelectedComponent.state &&
-      Object.keys(currentSelectedComponent.state).length > 0
-    ) {
-      setFormValues(currentSelectedComponent.state);
-    } else {
-      const initialValues: Record<string, any> = {};
-      currentSelectedComponent.content.node.childOptions?.forEach((child) => {
-        child.options.forEach((option) => {
-          const key = `${child.parentId}-${option.label}`;
-          initialValues[key] = option.default ?? "";
+      if (
+        currentSelectedLayout.state &&
+        Object.keys(currentSelectedLayout.state).length > 0
+      ) {
+        setFormValues(currentSelectedLayout.state);
+      } else {
+        const initialValues: Record<string, any> = {};
+        currentSelectedLayout.layout.childOptions?.forEach((child) => {
+          child.options.forEach((option) => {
+            const key = `${child.parentId}-${option.label}`;
+            initialValues[key] = option.default ?? "";
+          });
         });
-      });
-      setFormValues(initialValues);
+        setFormValues(initialValues);
+      }
+    } else if (currentSelectedComponent) {
+      setIsLayout(false);
+      setOptions(currentSelectedComponent.content.node.editOptions);
+      setChildOptions(currentSelectedComponent.content.node.childOptions);
+
+      if (
+        currentSelectedComponent.state &&
+        Object.keys(currentSelectedComponent.state).length > 0
+      ) {
+        setFormValues(currentSelectedComponent.state);
+      } else {
+        const initialValues: Record<string, any> = {};
+        currentSelectedComponent.content.node.childOptions?.forEach((child) => {
+          child.options.forEach((option) => {
+            const key = `${child.parentId}-${option.label}`;
+            initialValues[key] = option.default ?? "";
+          });
+        });
+        setFormValues(initialValues);
+      }
     }
-  }, [currentSelectedComponent]);
+  }, [currentSelectedComponent, currentSelectedLayout]);
 
   const handleValueChange = (key: string, value: any) => {
     setFormValues((prev: Record<string, any>) => ({
@@ -70,39 +98,125 @@ export function ComponentEditor({
       [key]: value,
     }));
 
-    setDraggableComponents((prev: IExtendedComponent[]) =>
-      prev.map((item) => {
-        if (item.instanceId === currentSelectedComponent.instanceId) {
-          const ComponentClass = item.content.node
-            .constructor as new () => Component;
-          const newNode = new ComponentClass();
+    if (isLayout && currentSelectedLayout) {
+      // Update layout
+      setLayouts((prev: IExtendedLayout[]) =>
+        prev.map((layout) => {
+          if (layout.instanceId === currentSelectedLayout.instanceId) {
+            const LayoutClass = layout.layout
+              .constructor as new () => LayoutComponentBase;
+            const newLayoutInstance = new LayoutClass();
 
-          const newState = {
-            ...item.state,
-            [key]: value,
-          };
+            const newState = {
+              ...layout.state,
+              [key]: value,
+            };
 
-          newNode.applyState(newState);
+            newLayoutInstance.applyState(newState);
 
-          return {
-            ...item,
-            content: { node: newNode },
-            state: newState,
-          };
-        }
-        return item;
-      })
-    );
+            return {
+              ...layout,
+              layout: newLayoutInstance,
+              state: newState,
+            };
+          }
+          return layout;
+        })
+      );
+
+      // Update current selected layout
+      setCurrentSelectedLayout({
+        ...currentSelectedLayout,
+        state: {
+          ...currentSelectedLayout.state,
+          [key]: value,
+        },
+      });
+    } else if (currentSelectedComponent) {
+      // Update component
+      setDraggableComponents((prev: IExtendedComponent[]) =>
+        prev.map((item) => {
+          if (item.instanceId === currentSelectedComponent.instanceId) {
+            const ComponentClass = item.content.node
+              .constructor as new () => Component;
+            const newNode = new ComponentClass();
+
+            const newState = {
+              ...item.state,
+              [key]: value,
+            };
+
+            newNode.applyState(newState);
+
+            return {
+              ...item,
+              content: { node: newNode },
+              state: newState,
+            };
+          }
+          return item;
+        })
+      );
+
+      // Also update in layouts
+      setLayouts((prev: IExtendedLayout[]) =>
+        prev.map((layout) => {
+          const updatedComponents = { ...layout.components };
+          let componentFound = false;
+
+          Object.keys(updatedComponents).forEach((zoneKey) => {
+            updatedComponents[zoneKey] = updatedComponents[zoneKey].map(
+              (comp) => {
+                if (comp.instanceId === currentSelectedComponent.instanceId) {
+                  componentFound = true;
+                  const ComponentClass = comp.content.node
+                    .constructor as new () => Component;
+                  const newNode = new ComponentClass();
+
+                  const newState = {
+                    ...comp.state,
+                    [key]: value,
+                  };
+
+                  newNode.applyState(newState);
+
+                  return {
+                    ...comp,
+                    content: { node: newNode },
+                    state: newState,
+                  };
+                }
+                return comp;
+              }
+            );
+          });
+
+          if (componentFound) {
+            return {
+              ...layout,
+              components: updatedComponents,
+            };
+          }
+          return layout;
+        })
+      );
+    }
   };
+
+  const handleClose = () => {
+    setCurrentSelectedComponent(null);
+    setCurrentSelectedLayout(null);
+  };
+
+  if (!currentSelectedComponent && !currentSelectedLayout) return null;
 
   return (
     <div className="flex flex-col gap-3 w-full max-h-full p-4">
       <div className="flex items-center justify-between">
-        <p className="text-lg font-medium">Component Editor</p>
-        <Button
-          variant={"ghost"}
-          onClick={() => setCurrentSelectedComponent(null as any)}
-        >
+        <p className="text-lg font-medium">
+          {isLayout ? "Layout Editor" : "Component Editor"}
+        </p>
+        <Button variant={"ghost"} onClick={handleClose}>
           <XIcon style={{ width: "24px", height: "auto" }} />
         </Button>
       </div>
@@ -182,7 +296,7 @@ export function ComponentEditor({
                                     onChange={(e) =>
                                       handleValueChange(
                                         fieldKey,
-                                        e.target.value
+                                        parseFloat(e.target.value)
                                       )
                                     }
                                   />

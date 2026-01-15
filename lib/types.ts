@@ -1,4 +1,5 @@
 import { Component } from "@/components/site/component";
+import { LayoutComponentBase } from "@/components/site/layoutComponent";
 import { LucideIcon } from "lucide-react";
 import { JSX } from "react";
 
@@ -38,6 +39,17 @@ export interface ILayoutComponent {
   id: string;
   label: string;
   content: IContent;
+}
+
+export interface IExtendedLayout {
+  id: string;
+  instanceId: string;
+  type: string;
+  name: string;
+  layout: LayoutComponentBase;
+  position: number;
+  components: { [zoneKey: string]: IExtendedComponent[] };
+  state: any;
 }
 
 export interface ILayoutContent {
@@ -146,7 +158,7 @@ export interface IWidgetsProps {
 export interface IEditorProps {
   draggableComponents: IExtendedComponent[];
   setDraggableComponents: (components: IExtendedComponent[]) => void;
-  currentSelectedComponent?: IExtendedComponent;
+  currentSelectedComponent: IExtendedComponent | null;
   setCurrentSelectedComponent: (component: IExtendedComponent) => void;
   formValues: Record<string, any>;
   dragPreview?: { x: number; y: number } | null;
@@ -166,12 +178,20 @@ export interface IDraggableItemProps {
 }
 
 export interface IComponentEditorProps {
-  currentSelectedComponent?: IExtendedComponent;
-  setCurrentSelectedComponent: (component: IExtendedComponent) => void;
+  currentSelectedComponent?: IExtendedComponent | null;
+  setCurrentSelectedComponent: (component: IExtendedComponent | null) => void;
+  currentSelectedLayout?: IExtendedLayout | null;
+  setCurrentSelectedLayout: (layout: IExtendedLayout | null) => void;
   formValues: Record<string, any>;
   setFormValues: (values: Record<string, any>) => void;
   setDraggableComponents: Function;
   draggableComponents: IExtendedComponent[];
+  layouts: IExtendedLayout[];
+  setLayouts: (
+    layouts:
+      | IExtendedLayout[]
+      | ((prev: IExtendedLayout[]) => IExtendedLayout[])
+  ) => void;
   setPage: (page: IPage) => void;
   page: IPage;
 }
