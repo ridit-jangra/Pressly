@@ -1,4 +1,4 @@
-import { Component } from "../component";
+import { Component } from "../../component";
 import { IComponentChildOption, IComponentOption, TOption } from "@/lib/types";
 
 export class primaryButton extends Component {

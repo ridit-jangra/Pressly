@@ -36,6 +36,7 @@ import { AuthService } from "@/lib/authService";
 import { Storage } from "@/lib/storage";
 import { toast } from "sonner";
 import { LayoutComponentBase } from "../site/layoutComponent";
+import { MinusIcon, PlusIcon } from "lucide-react";
 
 export function EditorLayout({ page: InitPage }: { page: IPage }) {
   const [site, setSite] = useState<ISite | null>(null);
@@ -438,13 +439,13 @@ export function EditorLayout({ page: InitPage }: { page: IPage }) {
               <ResizableHandle />
               <ResizablePanel defaultSize={hasSelection ? 50 : 75}>
                 <div className="relative h-full w-full bg-gray-100">
-                  <div className="absolute top-4 right-4 z-10 flex gap-2 bg-white rounded-lg shadow-lg p-2">
+                  <div className="absolute bottom-4 right-4 z-10 flex gap-2 bg-white rounded-lg shadow-lg p-2">
                     <button
                       onClick={() => setScale(Math.min(scale + 0.1, 3))}
                       className="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded"
                       title="Zoom In"
                     >
-                      +
+                      <PlusIcon />
                     </button>
                     <span className="px-3 py-1 text-sm">
                       {Math.round(scale * 100)}%
@@ -454,7 +455,7 @@ export function EditorLayout({ page: InitPage }: { page: IPage }) {
                       className="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded"
                       title="Zoom Out"
                     >
-                      -
+                      <MinusIcon />
                     </button>
                     <button
                       onClick={resetView}

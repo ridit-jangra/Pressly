@@ -11,17 +11,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../shadcn/tabs";
 import { Layers } from "./layers";
 import { Widgets } from "./widgets";
 import { useEffect } from "react";
-import { primaryButton } from "../site/components/button";
 import {
-  ImageIcon,
-  LinkIcon,
-  MapIcon,
-  MicIcon,
-  SparklesIcon,
   TextCursorIcon,
   ToggleLeftIcon,
-  VideoIcon,
   LayoutGrid,
+  ToggleRight,
+  FormInputIcon,
+  ImageIcon,
+  MicIcon,
+  SparklesIcon,
+  Video,
 } from "lucide-react";
 import {
   Grid2x2Layout,
@@ -30,6 +29,17 @@ import {
   SidebarLayout,
   TwoColumnLayout,
 } from "../site/layouts/";
+import {
+  primaryButton,
+  badge,
+  input,
+  toggleSwitch,
+  Video as VideoComponent,
+  Image as ImageComponent,
+  Text as TextComponent,
+  Audio as AudioComponent,
+  Icon as IconComponent,
+} from "../site/components/";
 
 export function Sidebar({
   components,
@@ -62,6 +72,54 @@ export function Sidebar({
         label: "Primary Button",
         content: { node: new primaryButton() },
       },
+      {
+        pageId: "input",
+        id: "input-field",
+        label: "Input Field",
+        content: { node: new input() },
+      },
+      {
+        pageId: "badge",
+        id: "badge",
+        label: "Badge",
+        content: { node: new badge() },
+      },
+      {
+        pageId: "toggle-switch",
+        id: "switch",
+        label: "Toggle Switch",
+        content: { node: new toggleSwitch() },
+      },
+      {
+        pageId: "video",
+        id: "video-player",
+        label: "Video Player",
+        content: { node: new VideoComponent() },
+      },
+      {
+        pageId: "image",
+        id: "image",
+        label: "Image",
+        content: { node: new ImageComponent() },
+      },
+      {
+        pageId: "text",
+        id: "text",
+        label: "Text",
+        content: { node: new TextComponent() },
+      },
+      {
+        pageId: "audio",
+        id: "audio-player",
+        label: "Audio Player",
+        content: { node: new AudioComponent() },
+      },
+      {
+        pageId: "icon",
+        id: "icon",
+        label: "Icon",
+        content: { node: new IconComponent() },
+      },
     ];
 
     const componentsPages: IComponentPage[] = [
@@ -76,6 +134,16 @@ export function Sidebar({
         icon: TextCursorIcon,
       },
       {
+        id: "toggle-switch",
+        name: "Toggle Switch",
+        icon: ToggleRight,
+      },
+      {
+        id: "input",
+        name: "Input",
+        icon: FormInputIcon,
+      },
+      {
         id: "image",
         name: "Image",
         icon: ImageIcon,
@@ -83,12 +151,7 @@ export function Sidebar({
       {
         id: "video",
         name: "Video",
-        icon: VideoIcon,
-      },
-      {
-        id: "link",
-        name: "Link",
-        icon: LinkIcon,
+        icon: Video,
       },
       {
         id: "audio",
@@ -100,44 +163,38 @@ export function Sidebar({
         name: "Icon",
         icon: SparklesIcon,
       },
-      {
-        id: "map",
-        name: "Map",
-        icon: MapIcon,
-      },
     ];
 
-    // Define all layout components
     const layoutComponents: ILayoutComponent[] = [
       {
         pageId: "layouts",
         id: "grid-2x2",
         label: "2x2 Grid",
-        content: { node: new Grid2x2Layout() as any },
+        content: { node: new Grid2x2Layout() },
       },
       {
         pageId: "layouts",
         id: "two-column",
         label: "Two Columns",
-        content: { node: new TwoColumnLayout() as any },
+        content: { node: new TwoColumnLayout() },
       },
       {
         pageId: "layouts",
         id: "three-column",
         label: "Three Columns",
-        content: { node: new ThreeColumnLayout() as any },
+        content: { node: new ThreeColumnLayout() },
       },
       {
         pageId: "layouts",
         id: "hero-section",
         label: "Hero Section",
-        content: { node: new HeroLayout() as any },
+        content: { node: new HeroLayout() },
       },
       {
         pageId: "layouts",
         id: "sidebar-layout",
         label: "Sidebar Layout",
-        content: { node: new SidebarLayout() as any },
+        content: { node: new SidebarLayout() },
       },
     ];
 
@@ -158,7 +215,10 @@ export function Sidebar({
   return (
     <div className="h-full w-full bg-background border-r">
       <Tabs defaultValue="widgets" className="h-full w-full">
-        <TabsList className="w-full justify-start rounded-none border-b">
+        <TabsList
+          className="w-full justify-start rounded-none border-b"
+          variant={"line"}
+        >
           {tabs.map((v, i) => (
             <TabsTrigger key={i} value={v.value} className="flex-1">
               {v.label}

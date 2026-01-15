@@ -80,7 +80,7 @@ export function AllPages({}: IAllPagesProps) {
   };
 
   const handleNewPage = () => {
-    router.replace("/dashboard?page=add-page");
+    router.replace("/dashboard?page=pages/add-page");
   };
 
   const handleDeletePage = async (pageToDelete: IPage) => {

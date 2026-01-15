@@ -5,6 +5,7 @@ import { ExampleContent } from "@/components/dashboard/example-content";
 import { AppSidebar } from "@/components/dashboard/sidebar";
 import { AddPage } from "@/components/pages/add-page";
 import { AllPages } from "@/components/pages/all-pages";
+import { Site } from "@/components/pages/site";
 import { Toaster } from "@/components/shadcn/sonner";
 import { AuthService } from "@/lib/authService";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -18,7 +19,7 @@ function DashboardContent() {
   );
 
   const contentMap: Record<string, JSX.Element> = {
-    "dashboard/site": <ExampleContent />,
+    "dashboard/site": <Site />,
     "pages/all-pages": <AllPages />,
     "pages/add-page": <AddPage />,
     "navigation/manage": <ExampleContent />,
@@ -55,7 +56,13 @@ function DashboardContent() {
 
 export default function Page() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense
+      fallback={
+        <div className="flex w-full min-h-screen bg-background text-foreground text-3xl items-center justify-center font-mono">
+          Loading Dashboard...
+        </div>
+      }
+    >
       <DashboardContent />
     </Suspense>
   );

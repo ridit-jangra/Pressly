@@ -70,10 +70,10 @@ export function AddPage() {
 
   return (
     <div className="flex h-full w-full items-center justify-center">
-      <div className="w-[60%] h-[70%] bg-muted flex items-center justify-center rounded-4xl">
+      <div className="w-[60%] h-[70%] border-2 flex items-center justify-center rounded-4xl px-4">
         <div className="w-[60%] h-full">
-          <FieldGroup className="px-4 gap-5 py-10">
-            <div className="flex flex-col gap-1">
+          <FieldGroup className="px-4 gap-6 py-10">
+            <div className="flex flex-col gap-1 font-mono">
               <h1 className="text-xl font-bold">Create New Page</h1>
               <p className="text-md">Add new page to your website.</p>
             </div>
@@ -84,6 +84,7 @@ export function AddPage() {
                 id="name"
                 type="text"
                 placeholder="e.g: About us, Services, Contact"
+                className="bg-background"
                 value={title}
                 onChange={(e) => {
                   setTitle(e.target.value);

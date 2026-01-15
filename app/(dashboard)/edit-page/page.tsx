@@ -27,7 +27,6 @@ function EditPageContent() {
         if (selectedPage) {
           setPage(selectedPage);
         } else {
-          console.log("Page not found with id:", id);
         }
       }
 
@@ -38,7 +37,11 @@ function EditPageContent() {
   }, [searchParams]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex w-full min-h-screen bg-background text-foreground text-3xl items-center justify-center font-mono">
+        Loading Editor...
+      </div>
+    );
   }
 
   return <>{page ? <EditorLayout page={page} /> : <div>Page not found</div>}</>;
@@ -46,7 +49,13 @@ function EditPageContent() {
 
 export default function Page() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense
+      fallback={
+        <div className="flex w-full min-h-screen bg-background text-foreground text-3xl items-center justify-center font-mono">
+          Loading Editor...
+        </div>
+      }
+    >
       <EditPageContent />
     </Suspense>
   );

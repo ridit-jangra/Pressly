@@ -28,6 +28,10 @@ export interface IContent {
   node: Component;
 }
 
+export interface ILayoutContent {
+  node: LayoutComponentBase;
+}
+
 export interface IComponentPage {
   id: string;
   name: string;
@@ -38,7 +42,7 @@ export interface ILayoutComponent {
   pageId: string;
   id: string;
   label: string;
-  content: IContent;
+  content: ILayoutContent;
 }
 
 export interface IExtendedLayout {
@@ -50,10 +54,6 @@ export interface IExtendedLayout {
   position: number;
   components: { [zoneKey: string]: IExtendedComponent[] };
   state: any;
-}
-
-export interface ILayoutContent {
-  node: Component;
 }
 
 export interface ILayoutPage {

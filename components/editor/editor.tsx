@@ -2,7 +2,6 @@
 
 import { IEditorProps, IExtendedComponent, IExtendedLayout } from "@/lib/types";
 import { DropZone } from "../ui/dropZone";
-import { useEffect, useState } from "react";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -182,7 +181,6 @@ export function Editor({
                         </span>
                       </div>
 
-                      {/* Layout Grid */}
                       <div
                         className="grid"
                         style={{
@@ -209,7 +207,7 @@ export function Editor({
                               <DropZone
                                 key={`${layout.instanceId}-${zoneIndex}`}
                                 id={`${layout.instanceId}-zone-${zoneIndex}`}
-                                className="border-2 border-dashed border-gray-300 rounded-lg p-4 min-h-[150px] hover:border-blue-400 hover:bg-blue-50/50 transition-colors"
+                                className="border-2 border-dashed border-gray-300 rounded-lg p-4 min-h-37.5 hover:border-blue-400 hover:bg-blue-50/50 transition-colors"
                               >
                                 {zoneComponents.length === 0 ? (
                                   <div className="h-full flex items-center justify-center text-gray-400 text-sm">
@@ -231,16 +229,11 @@ export function Editor({
                                                 ? "ring-2 ring-blue-500"
                                                 : ""
                                             }`}
-                                          >
-                                            <div
-                                              className={`${comp.content.node.classes.join(
-                                                " "
-                                              )}`}
-                                              style={comp.content.node.styles}
-                                            >
-                                              {comp.content.node.text}
-                                            </div>
-                                          </div>
+                                            dangerouslySetInnerHTML={{
+                                              __html:
+                                                comp.content.node.getCode(),
+                                            }}
+                                          ></div>
                                         </ContextMenuTrigger>
                                         <ContextMenuContent>
                                           <ContextMenuItem
