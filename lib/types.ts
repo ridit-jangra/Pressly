@@ -86,6 +86,7 @@ export interface IPage {
   head: IHead;
   body: IBody;
   footer: IFooter;
+  url: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -163,6 +164,7 @@ export interface IEditorProps {
   formValues: Record<string, any>;
   dragPreview?: { x: number; y: number } | null;
   page: IPage;
+  navigation: INavigation | null;
 }
 
 export interface IDropZoneProps {
@@ -190,7 +192,7 @@ export interface IComponentEditorProps {
   setLayouts: (
     layouts:
       | IExtendedLayout[]
-      | ((prev: IExtendedLayout[]) => IExtendedLayout[])
+      | ((prev: IExtendedLayout[]) => IExtendedLayout[]),
   ) => void;
   setPage: (page: IPage) => void;
   page: IPage;
@@ -278,6 +280,23 @@ export interface IPendingRegistration {
 }
 
 export interface IAllPagesProps {}
+
+export interface INavigationItem {
+  id: string;
+  title: string;
+  url: string;
+}
+
+export interface INavigation {
+  items: INavigationItem[];
+  name: string;
+}
+
+export interface IExportSiteOptions {
+  pages: IPage[];
+  navigation: INavigation;
+  siteData: ISite;
+}
 
 export type TOption =
   | ITextOption[]

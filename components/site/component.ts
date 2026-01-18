@@ -11,6 +11,9 @@ export abstract class Component {
   public styles: React.CSSProperties = {};
   public code: string = "";
   public state: IComponentState = {};
+  public attributes: Record<string, string> = {};
+  public events: Record<string, string> = {};
+  public children: Component[] = [];
 
   abstract editOptions: IComponentOption[];
   abstract childOptions: IComponentChildOption[];
@@ -23,16 +26,16 @@ export abstract class Component {
     tag: string,
     text: string,
     classes: string[] = [],
-    styles: React.CSSProperties = {}
+    styles: React.CSSProperties = {},
+    attributes: Record<string, string> = {},
   ): void {
     this.tag = tag || this.tag;
     this.text = text;
     this.classes = classes;
     this.styles = styles;
+    this.attributes = attributes;
 
     this.updateCode();
-
-    console.log("updating tag", tag);
   }
 
   public applyState(state: IComponentState): void {
@@ -49,10 +52,9 @@ export abstract class Component {
   protected handleStateChange(
     parentId: string,
     label: string,
-    value: any
+    value: any,
   ): void {
     this.state[`${parentId}-${label}`] = value;
-
     this.update();
   }
 
@@ -70,7 +72,7 @@ export abstract class Component {
 
   public setStyle(
     property: keyof React.CSSProperties,
-    value: string | number
+    value: string | number,
   ): void {
     this.styles[property] = value as any;
     this.updateCode();
@@ -81,6 +83,16 @@ export abstract class Component {
     this.updateCode();
   }
 
+  public setAttribute(name: string, value: string): void {
+    this.attributes[name] = value;
+    this.updateCode();
+  }
+
+  public removeAttribute(name: string): void {
+    delete this.attributes[name];
+    this.updateCode();
+  }
+
   public getCode(): string {
     return this.code;
   }
@@ -88,33 +100,49 @@ export abstract class Component {
   private updateCode(): void {
     const classString = this.classes.join(" ").trim();
     const styleString = this.formatStyles(this.styles);
+    const attributesString = this.formatAttributes(this.attributes);
 
     const classAttr = classString ? ` class="${classString}"` : "";
     const styleAttr = styleString ? ` style="${styleString}"` : "";
 
     const isVoidElement = ["img", "br", "hr", "input", "meta", "link"].includes(
-      this.tag
+      this.tag,
     );
-    this.code = isVoidElement
-      ? `<${this.tag}${classAttr}${styleAttr} />`
-      : `<${this.tag}${classAttr}${styleAttr}>${this.escapeHtml(this.text)}</${
-          this.tag
-        }>`;
 
-    console.log("generated code", this.code);
+    if (isVoidElement) {
+      this.code = `<${this.tag}${classAttr}${styleAttr}${attributesString} />`;
+    } else {
+      const childrenHtml = this.children
+        .map((child) => child.getCode())
+        .join("");
+      const content = this.text ? this.escapeHtml(this.text) : childrenHtml;
+      this.code = `<${this.tag}${classAttr}${styleAttr}${attributesString}>${content}</${this.tag}>`;
+    }
   }
 
-  private formatStyles(styles: React.CSSProperties): string {
+  protected formatAttributes(attrs: Record<string, string>): string {
+    return Object.entries(attrs)
+      .map(([key, value]) => ` ${key}="${this.escapeHtml(value)}"`)
+      .join("");
+  }
+
+  protected formatStyles(styles: React.CSSProperties): string {
     return Object.entries(styles)
       .map(([key, value]) => {
         const cssKey = key.replace(/([A-Z])/g, "-$1").toLowerCase();
-        const cssValue = typeof value === "number" ? `${value}px` : value;
-        return `${cssKey}: ${cssValue}`;
+        // Handle special cases
+        if (
+          typeof value === "number" &&
+          !["opacity", "zIndex", "fontWeight", "lineHeight"].includes(key)
+        ) {
+          return `${cssKey}: ${value}px`;
+        }
+        return `${cssKey}: ${value}`;
       })
       .join("; ");
   }
 
-  private escapeHtml(text: string): string {
+  protected escapeHtml(text: string): string {
     const map: Record<string, string> = {
       "&": "&amp;",
       "<": "&lt;",
@@ -151,5 +179,22 @@ export abstract class Component {
     });
 
     return errors;
+  }
+
+  // Helper to convert hex to rgba
+  protected hexToRgba(hex: string, alpha: number): string {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  }
+
+  // Helper for common style calculations
+  protected getResponsiveValue(
+    desktop: number,
+    tablet?: number,
+    mobile?: number,
+  ): string {
+    return `${desktop}px`;
   }
 }

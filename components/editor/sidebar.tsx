@@ -12,34 +12,24 @@ import { Layers } from "./layers";
 import { Widgets } from "./widgets";
 import { useEffect } from "react";
 import {
-  TextCursorIcon,
-  ToggleLeftIcon,
   LayoutGrid,
-  ToggleRight,
-  FormInputIcon,
+  MousePointerClick,
+  Heading1,
   ImageIcon,
-  MicIcon,
-  SparklesIcon,
   Video,
+  SeparatorHorizontal,
+  Container,
+  SparklesIcon,
 } from "lucide-react";
 import {
-  Grid2x2Layout,
-  ThreeColumnLayout,
-  HeroLayout,
-  SidebarLayout,
-  TwoColumnLayout,
-} from "../site/layouts/";
-import {
-  primaryButton,
-  badge,
-  input,
-  toggleSwitch,
-  Video as VideoComponent,
-  Image as ImageComponent,
-  Text as TextComponent,
-  Audio as AudioComponent,
-  Icon as IconComponent,
+  WordPressButton,
+  WordPressHeading,
+  WordPressImage,
+  WordPressVideo,
+  WordPressSpacer,
+  WordPressIcon,
 } from "../site/components/";
+import { WordPressContainer, WordPressColumns } from "../site/layouts/";
 
 export function Sidebar({
   components,
@@ -68,57 +58,39 @@ export function Sidebar({
     const components: IComponent[] = [
       {
         pageId: "button",
-        id: "primary-button",
-        label: "Primary Button",
-        content: { node: new primaryButton() },
+        id: "wp-button",
+        label: "Button",
+        content: { node: new WordPressButton() },
       },
       {
-        pageId: "input",
-        id: "input-field",
-        label: "Input Field",
-        content: { node: new input() },
-      },
-      {
-        pageId: "badge",
-        id: "badge",
-        label: "Badge",
-        content: { node: new badge() },
-      },
-      {
-        pageId: "toggle-switch",
-        id: "switch",
-        label: "Toggle Switch",
-        content: { node: new toggleSwitch() },
-      },
-      {
-        pageId: "video",
-        id: "video-player",
-        label: "Video Player",
-        content: { node: new VideoComponent() },
+        pageId: "heading",
+        id: "wp-heading",
+        label: "Heading",
+        content: { node: new WordPressHeading() },
       },
       {
         pageId: "image",
-        id: "image",
+        id: "wp-image",
         label: "Image",
-        content: { node: new ImageComponent() },
+        content: { node: new WordPressImage() },
       },
       {
-        pageId: "text",
-        id: "text",
-        label: "Text",
-        content: { node: new TextComponent() },
+        pageId: "video",
+        id: "wp-video",
+        label: "Video",
+        content: { node: new WordPressVideo() },
       },
       {
-        pageId: "audio",
-        id: "audio-player",
-        label: "Audio Player",
-        content: { node: new AudioComponent() },
+        pageId: "spacer",
+        id: "wp-spacer",
+        label: "Spacer",
+        content: { node: new WordPressSpacer() },
       },
       {
         pageId: "icon",
-        id: "icon",
+        id: "wp-icon",
         label: "Icon",
-        content: { node: new IconComponent() },
+        content: { node: new WordPressIcon() },
       },
     ];
 
@@ -126,22 +98,12 @@ export function Sidebar({
       {
         id: "button",
         name: "Button",
-        icon: ToggleLeftIcon,
+        icon: MousePointerClick,
       },
       {
-        id: "text",
-        name: "Text",
-        icon: TextCursorIcon,
-      },
-      {
-        id: "toggle-switch",
-        name: "Toggle Switch",
-        icon: ToggleRight,
-      },
-      {
-        id: "input",
-        name: "Input",
-        icon: FormInputIcon,
+        id: "heading",
+        name: "Heading",
+        icon: Heading1,
       },
       {
         id: "image",
@@ -154,9 +116,9 @@ export function Sidebar({
         icon: Video,
       },
       {
-        id: "audio",
-        name: "Audio",
-        icon: MicIcon,
+        id: "spacer",
+        name: "Spacer",
+        icon: SeparatorHorizontal,
       },
       {
         id: "icon",
@@ -167,41 +129,28 @@ export function Sidebar({
 
     const layoutComponents: ILayoutComponent[] = [
       {
-        pageId: "layouts",
-        id: "grid-2x2",
-        label: "2x2 Grid",
-        content: { node: new Grid2x2Layout() },
+        pageId: "wordpress-layouts",
+        id: "wordpress-container",
+        label: "Container",
+        content: { node: new WordPressContainer() },
       },
       {
-        pageId: "layouts",
-        id: "two-column",
-        label: "Two Columns",
-        content: { node: new TwoColumnLayout() },
-      },
-      {
-        pageId: "layouts",
-        id: "three-column",
-        label: "Three Columns",
-        content: { node: new ThreeColumnLayout() },
-      },
-      {
-        pageId: "layouts",
-        id: "hero-section",
-        label: "Hero Section",
-        content: { node: new HeroLayout() },
-      },
-      {
-        pageId: "layouts",
-        id: "sidebar-layout",
-        label: "Sidebar Layout",
-        content: { node: new SidebarLayout() },
+        pageId: "wordpress-layouts",
+        id: "wordpress-columns",
+        label: "Columns",
+        content: { node: new WordPressColumns() },
       },
     ];
 
     const layoutPages: ILayoutPage[] = [
       {
-        id: "layouts",
-        name: "All Layouts",
+        id: "wordpress-layouts",
+        name: "WordPress Layouts",
+        icon: Container,
+      },
+      {
+        id: "classic-layouts",
+        name: "Classic Layouts",
         icon: LayoutGrid,
       },
     ];

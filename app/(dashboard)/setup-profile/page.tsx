@@ -20,7 +20,7 @@ export default function Page() {
   const [siteUrl, setSiteUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<{ siteName?: string; siteUrl?: string }>(
-    {}
+    {},
   );
 
   const validateForm = () => {
@@ -52,7 +52,7 @@ export default function Page() {
       await AuthService.addSiteData({ name: siteName.trim(), url: siteUrl });
       await AuthService.setCompletedSetup(true);
       toast.success("Profile completed successfully!");
-      router.replace("/dashboard");
+      router.push("/dashboard");
     } catch (error: any) {
       toast.error(error.message || "Invalid name or url");
     } finally {

@@ -37,7 +37,7 @@ export function NavMain({
   const router = useRouter();
 
   const handleSetContent = (subItem: { title: string; url: string }) => {
-    router.replace(`/dashboard?page=${subItem.url}`);
+    router.push(`/dashboard?page=${subItem.url}`);
   };
 
   return (

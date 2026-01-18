@@ -37,6 +37,7 @@ export function AddPage() {
         },
         title: "New Page",
       },
+      url: `/${title.replace(" ", "-").toLowerCase()}`,
       body: {
         components: [],
       },
@@ -48,21 +49,18 @@ export function AddPage() {
     };
 
     try {
-      // Get existing pages
       const existingPages = (await Storage.getItem("pages", "pages")) as
         | IPage[]
         | null;
 
-      // Add new page to array
       const updatedPages = existingPages
         ? [...existingPages, newPage]
         : [newPage];
 
-      // Store the entire array
       await Storage.setItem("pages", "pages", updatedPages);
 
       toast("Page created successfully!");
-      router.replace(`edit-page?id=${newPage.id}`);
+      router.push(`edit-page?id=${newPage.id}`);
     } catch (err) {
       toast(`Error creating page: ${err}`);
     }

@@ -25,7 +25,7 @@ export function LoginForm({
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<{ email?: string; password?: string }>(
-    {}
+    {},
   );
   const hasCheckedAuth = useRef(false);
 
@@ -87,7 +87,7 @@ export function LoginForm({
     try {
       await AuthService.login(email.trim(), password);
       toast.success("Logged in successfully!");
-      router.replace("/dashboard");
+      router.push("/dashboard");
     } catch (error: any) {
       toast.error(error.message || "Invalid email or password");
     } finally {
@@ -114,7 +114,7 @@ export function LoginForm({
               Don&apos;t have an account?{" "}
               <span
                 className="cursor-pointer hover:underline"
-                onClick={() => router.replace("signup")}
+                onClick={() => router.push("signup")}
               >
                 Sign up
               </span>
@@ -180,7 +180,7 @@ export function LoginForm({
             <Button
               variant="outline"
               type="button"
-              onClick={() => router.replace("signup")}
+              onClick={() => router.push("signup")}
               disabled={isLoading}
               className="w-full"
             >

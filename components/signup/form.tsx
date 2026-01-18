@@ -102,7 +102,7 @@ export function SignupForm({
       await AuthService.initiateRegistration(
         formData.name.trim(),
         formData.email.trim().toLowerCase(),
-        formData.password
+        formData.password,
       );
 
       toast.success("Verification code sent! Check your email or console.");
@@ -126,7 +126,7 @@ export function SignupForm({
     try {
       await AuthService.verifyOTPAndCreateAccount(userEmail, otp);
       toast.success("Account created successfully! Welcome to Pressly!");
-      router.replace("/dashboard");
+      router.push("/dashboard");
     } catch (error: any) {
       setOtpError(error.message);
       toast.error(error.message);
@@ -282,7 +282,7 @@ export function SignupForm({
               Already have an account?{" "}
               <span
                 className="cursor-pointer hover:underline"
-                onClick={() => router.replace("login")}
+                onClick={() => router.push("login")}
               >
                 Sign in
               </span>
@@ -375,7 +375,7 @@ export function SignupForm({
             <Button
               variant="outline"
               type="button"
-              onClick={() => router.replace("login")}
+              onClick={() => router.push("login")}
               disabled={isLoading}
               className="w-full"
             >

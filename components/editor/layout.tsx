@@ -11,6 +11,7 @@ import {
   IExtendedLayout,
   ILayoutComponent,
   ILayoutPage,
+  INavigation,
   IPage,
   ISite,
   IUser,
@@ -51,7 +52,7 @@ export function EditorLayout({ page: InitPage }: { page: IPage }) {
   const [components, setComponents] = useState<IComponent[]>([]);
   const [componentsPages, setComponentsPages] = useState<IComponentPage[]>([]);
   const [layoutComponents, setLayoutComponents] = useState<ILayoutComponent[]>(
-    []
+    [],
   );
   const [layouts, setLayouts] = useState<IExtendedLayout[]>([]);
   const [layoutsPages, setLayoutsPages] = useState<ILayoutPage[]>([]);
@@ -62,9 +63,9 @@ export function EditorLayout({ page: InitPage }: { page: IPage }) {
   const [draggableComponents, setDraggableComponents] = useState<
     IExtendedComponent[]
   >([]);
+  const [navigation, setNavigation] = useState<INavigation | null>(null);
   const [formValues, setFormValues] = useState<Record<string, any>>({});
 
-  // Canvas transform state
   const [scale, setScale] = useState(1);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isPanning, setIsPanning] = useState(false);
@@ -76,7 +77,7 @@ export function EditorLayout({ page: InitPage }: { page: IPage }) {
       activationConstraint: {
         distance: 8,
       },
-    })
+    }),
   );
 
   function handleDragEnd(event: DragEndEvent) {
@@ -86,7 +87,6 @@ export function EditorLayout({ page: InitPage }: { page: IPage }) {
 
     const overId = String(over.id);
 
-    // Check if dropping a layout onto the main zone
     if (overId === "component-zone") {
       const layout = layoutComponents.find((l) => l.id === active.id);
 
@@ -123,7 +123,6 @@ export function EditorLayout({ page: InitPage }: { page: IPage }) {
       }
     }
 
-    // Check if dropping a component into a layout zone
     if (overId.includes("-zone-")) {
       const parts = overId.split("-zone-");
       const layoutInstanceId = parts[0];
@@ -173,13 +172,12 @@ export function EditorLayout({ page: InitPage }: { page: IPage }) {
               };
             }
             return layout;
-          })
+          }),
         );
       }
     }
   }
 
-  // Canvas pan and zoom handlers
   const handleWheel = (e: React.WheelEvent) => {
     if (e.ctrlKey || e.metaKey) {
       e.preventDefault();
@@ -246,6 +244,21 @@ export function EditorLayout({ page: InitPage }: { page: IPage }) {
     getUser();
   }, []);
 
+  const fetchNavigation = async () => {
+    const v = (await Storage.getItem(
+      "navigation",
+      "navigation",
+    )) as INavigation;
+
+    console.log("fetched navigation", v);
+
+    if (v) {
+      setNavigation(v);
+    } else {
+      setNavigation({ items: [], name: "Init Menu" });
+    }
+  };
+
   const formatDate = (date: Date): string => {
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
@@ -262,7 +275,7 @@ export function EditorLayout({ page: InitPage }: { page: IPage }) {
       const reconstructedLayouts = InitPage.body.components
         .map((savedLayout: any) => {
           const layoutDef = layoutComponents.find(
-            (l) => l.id === savedLayout.id
+            (l) => l.id === savedLayout.id,
           );
 
           if (layoutDef) {
@@ -278,7 +291,7 @@ export function EditorLayout({ page: InitPage }: { page: IPage }) {
               reconstructedComponents[zoneKey] = savedLayout.components[zoneKey]
                 .map((savedComp: any) => {
                   const componentDef = components.find(
-                    (c) => c.id === savedComp.id
+                    (c) => c.id === savedComp.id,
                   );
                   if (componentDef) {
                     const ComponentClass = componentDef.content.node
@@ -319,6 +332,10 @@ export function EditorLayout({ page: InitPage }: { page: IPage }) {
       setLayouts(reconstructedLayouts);
     }
   }, [InitPage, components, layoutComponents]);
+
+  useEffect(() => {
+    fetchNavigation();
+  }, []);
 
   const handleSavePage = async () => {
     try {
@@ -377,7 +394,7 @@ export function EditorLayout({ page: InitPage }: { page: IPage }) {
       };
 
       const updatedPages = existingPages.map((p) =>
-        p.id === updatedPage.id ? updatedPage : p
+        p.id === updatedPage.id ? updatedPage : p,
       );
 
       await Storage.setItem("pages", "pages", updatedPages);
@@ -498,6 +515,7 @@ export function EditorLayout({ page: InitPage }: { page: IPage }) {
                         page={page}
                         layouts={layouts}
                         setLayouts={setLayouts}
+                        navigation={navigation}
                       />
                     </div>
                   </div>

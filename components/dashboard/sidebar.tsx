@@ -66,10 +66,6 @@ const navMainItems: INavMainItems[] = [
         title: "Manage Navigation",
         url: "navigation/manage",
       },
-      {
-        title: "Add/Remove Links",
-        url: "navigation/edit",
-      },
     ],
   },
   {

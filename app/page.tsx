@@ -34,7 +34,7 @@ export default function Page() {
         console.error("Auth check error:", error);
 
         if (isMounted) {
-          router.replace("/login");
+          router.push("/login");
         }
       }
     };

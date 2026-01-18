@@ -1,21 +1,15 @@
-import { primaryButton } from "./buttons/primary";
-import { input } from "./inputs/input";
-import { badge } from "./badge/badge";
-import { toggleSwitch } from "./toggle/switch";
-import { Video } from "./videos/video";
-import { Image } from "./images/image";
-import { Text } from "./texts/text";
-import { Audio } from "./audios/audio";
-import { Icon } from "./icons/icon";
+import { WordPressButton } from "./button";
+import { WordPressHeading } from "./heading";
+import { WordPressImage } from "./image";
+import { WordPressSpacer } from "./spacer";
+import { WordPressVideo } from "./video";
+import { WordPressIcon } from "./icon";
 
 export {
-  primaryButton,
-  input,
-  badge,
-  toggleSwitch,
-  Video,
-  Image,
-  Text,
-  Audio,
-  Icon,
+  WordPressButton,
+  WordPressHeading,
+  WordPressImage,
+  WordPressSpacer,
+  WordPressVideo,
+  WordPressIcon,
 };

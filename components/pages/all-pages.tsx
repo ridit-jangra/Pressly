@@ -54,7 +54,7 @@ export function AllPages({}: IAllPagesProps) {
   const [pages, setPages] = React.useState<IPage[]>([]);
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
+    [],
   );
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -76,11 +76,11 @@ export function AllPages({}: IAllPagesProps) {
   }, []);
 
   const handleEditPage = (page: IPage) => {
-    router.replace(`edit-page?id=${page.id}`);
+    router.push(`edit-page?id=${page.id}`);
   };
 
   const handleNewPage = () => {
-    router.replace("/dashboard?page=pages/add-page");
+    router.push("/dashboard?page=pages/add-page");
   };
 
   const handleDeletePage = async (pageToDelete: IPage) => {
@@ -201,7 +201,7 @@ export function AllPages({}: IAllPagesProps) {
   return (
     <div className="w-full h-full flex flex-col gap-6">
       <div className="flex items-center justify-between">
-        <p className="text-3xl font-medium">All Pages</p>
+        <p className="text-3xl font-medium font-mono">All Pages</p>
         <Button onClick={handleNewPage}>Create New Page</Button>
       </div>
 
@@ -257,7 +257,7 @@ export function AllPages({}: IAllPagesProps) {
                             ? null
                             : flexRender(
                                 header.column.columnDef.header,
-                                header.getContext()
+                                header.getContext(),
                               )}
                         </TableHead>
                       );
@@ -276,7 +276,7 @@ export function AllPages({}: IAllPagesProps) {
                         <TableCell key={cell.id}>
                           {flexRender(
                             cell.column.columnDef.cell,
-                            cell.getContext()
+                            cell.getContext(),
                           )}
                         </TableCell>
                       ))}
