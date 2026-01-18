@@ -1,15 +1,8 @@
-import { WordPressButton } from "./button";
-import { WordPressHeading } from "./heading";
-import { WordPressImage } from "./image";
-import { WordPressSpacer } from "./spacer";
-import { WordPressVideo } from "./video";
-import { WordPressIcon } from "./icon";
+import { Button } from "./button";
+import { Heading } from "./heading";
+import { Image } from "./image";
+import { Spacer } from "./spacer";
+import { Video } from "./video";
+import { Icon } from "./icon";
 
-export {
-  WordPressButton,
-  WordPressHeading,
-  WordPressImage,
-  WordPressSpacer,
-  WordPressVideo,
-  WordPressIcon,
-};
+export { Button, Heading, Image, Spacer, Video, Icon };

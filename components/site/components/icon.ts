@@ -1,7 +1,7 @@
 import { Component } from "../component";
 import { IComponentChildOption, IComponentOption, TOption } from "@/lib/types";
 
-export class WordPressIcon extends Component {
+export class Icon extends Component {
   editOptions: IComponentOption[] = [
     {
       id: "content",

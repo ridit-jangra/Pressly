@@ -320,7 +320,7 @@ export function ManageColors() {
               placeholder="Search colors..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="max-w-md"
+              className="max-w-7xl"
             />
             <div className="flex items-center gap-2 ml-auto">
               <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
@@ -382,14 +382,6 @@ export function ManageColors() {
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
-              <Button variant="outline" size="sm">
-                <Download className="w-4 h-4 mr-2" />
-                Export
-              </Button>
-              <Button variant="outline" size="sm">
-                <Upload className="w-4 h-4 mr-2" />
-                Import
-              </Button>
             </div>
           </div>
         </div>
@@ -562,136 +554,138 @@ export function ManageColors() {
 
         {selectedColor && (
           <div className="w-80 border-l bg-card">
-            <div className="h-full flex flex-col">
-              <div className="p-4 border-b">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="font-semibold">Color Details</h3>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setSelectedColor(null)}
-                    className="h-8 w-8"
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  {getSelectedColorLabel()}
-                </p>
-              </div>
-
-              <div className="p-4 border-b">
-                <div
-                  className="w-full h-32 rounded-lg border-2 border-border shadow-sm"
-                  style={{ backgroundColor: getSelectedColorValue() }}
-                />
-                <div className="mt-4 space-y-2">
-                  <div className="text-sm text-muted-foreground">
-                    Color Value
+            <ScrollArea className="h-[calc(100vh-11rem)]">
+              <div className="h-full flex flex-col">
+                <div className="p-4 border-b">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="font-semibold">Color Details</h3>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => setSelectedColor(null)}
+                      className="h-8 w-8"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
                   </div>
-                  <code className="block text-lg font-mono bg-muted px-3 py-2 rounded">
-                    {getSelectedColorValue()}
-                  </code>
+                  <p className="text-sm text-muted-foreground">
+                    {getSelectedColorLabel()}
+                  </p>
                 </div>
-              </div>
 
-              <ScrollArea className="flex-1">
-                <div className="p-4 space-y-4">
-                  <div>
-                    <Label className="text-sm font-medium mb-2 block">
-                      Choose Color
-                    </Label>
-                    <ColorPicker
-                      value={getSelectedColorValue()}
-                      onChange={(value) => {
-                        if (selectedColorType === "standard") {
-                          handleColorChange(
-                            selectedColor as keyof IColors,
-                            value,
-                          );
-                        } else {
-                          handleCustomColorChange(selectedColor, value);
-                        }
-                      }}
-                    />
+                <div className="p-4 border-b">
+                  <div
+                    className="w-full h-32 rounded-lg border-2 border-border shadow-sm"
+                    style={{ backgroundColor: getSelectedColorValue() }}
+                  />
+                  <div className="mt-4 space-y-2">
+                    <div className="text-sm text-muted-foreground">
+                      Color Value
+                    </div>
+                    <code className="block text-lg font-mono bg-muted px-3 py-2 rounded">
+                      {getSelectedColorValue()}
+                    </code>
                   </div>
+                </div>
 
-                  <div>
-                    <Label className="text-sm font-medium mb-2 block">
-                      Preview
-                    </Label>
-                    <div className="space-y-2">
-                      <div
-                        className="p-3 rounded-lg"
-                        style={{ backgroundColor: getSelectedColorValue() }}
-                      >
+                <ScrollArea className="flex-1">
+                  <div className="p-4 space-y-4">
+                    <div>
+                      <Label className="text-sm font-medium mb-2 block">
+                        Choose Color
+                      </Label>
+                      <ColorPicker
+                        value={getSelectedColorValue()}
+                        onChange={(value) => {
+                          if (selectedColorType === "standard") {
+                            handleColorChange(
+                              selectedColor as keyof IColors,
+                              value,
+                            );
+                          } else {
+                            handleCustomColorChange(selectedColor, value);
+                          }
+                        }}
+                      />
+                    </div>
+
+                    <div>
+                      <Label className="text-sm font-medium mb-2 block">
+                        Preview
+                      </Label>
+                      <div className="space-y-2">
                         <div
-                          className="text-sm font-medium"
+                          className="p-3 rounded-lg"
+                          style={{ backgroundColor: getSelectedColorValue() }}
+                        >
+                          <div
+                            className="text-sm font-medium"
+                            style={{
+                              color: colors.foreground,
+                            }}
+                          >
+                            Background Example
+                          </div>
+                        </div>
+
+                        <button
+                          className="w-full px-4 py-2 rounded-lg font-medium transition-colors"
                           style={{
+                            backgroundColor: getSelectedColorValue(),
                             color: colors.foreground,
                           }}
                         >
-                          Background Example
-                        </div>
-                      </div>
+                          Button Example
+                        </button>
 
-                      <button
-                        className="w-full px-4 py-2 rounded-lg font-medium transition-colors"
-                        style={{
-                          backgroundColor: getSelectedColorValue(),
-                          color: colors.foreground,
-                        }}
-                      >
-                        Button Example
-                      </button>
-
-                      <div className="p-3 border rounded-lg">
-                        <div
-                          className="text-sm"
-                          style={{ color: getSelectedColorValue() }}
-                        >
-                          Text Example
+                        <div className="p-3 border rounded-lg">
+                          <div
+                            className="text-sm"
+                            style={{ color: getSelectedColorValue() }}
+                          >
+                            Text Example
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
 
-                  <div>
-                    <Label className="text-sm font-medium mb-2 block">
-                      Type
-                    </Label>
-                    <span
-                      className={`inline-flex items-center px-3 py-1.5 rounded-md text-sm font-medium ${
-                        selectedColorType === "custom"
-                          ? "bg-pink-100 text-pink-700 dark:bg-pink-900 dark:text-pink-300"
-                          : getCategoryBadgeColor(
-                              colorFields.find((f) => f.key === selectedColor)
-                                ?.category || "",
-                            )
-                      }`}
-                    >
-                      {selectedColorType === "custom"
-                        ? "Custom"
-                        : colorFields.find((f) => f.key === selectedColor)
-                            ?.category}
-                    </span>
-                  </div>
+                    <div>
+                      <Label className="text-sm font-medium mb-2 block">
+                        Type
+                      </Label>
+                      <span
+                        className={`inline-flex items-center px-3 py-1.5 rounded-md text-sm font-medium ${
+                          selectedColorType === "custom"
+                            ? "bg-pink-100 text-pink-700 dark:bg-pink-900 dark:text-pink-300"
+                            : getCategoryBadgeColor(
+                                colorFields.find((f) => f.key === selectedColor)
+                                  ?.category || "",
+                              )
+                        }`}
+                      >
+                        {selectedColorType === "custom"
+                          ? "Custom"
+                          : colorFields.find((f) => f.key === selectedColor)
+                              ?.category}
+                      </span>
+                    </div>
 
-                  <div>
-                    <Label className="text-sm font-medium mb-2 block">
-                      Description
-                    </Label>
-                    <p className="text-sm text-muted-foreground">
-                      {selectedColorType === "standard"
-                        ? colorFields.find((f) => f.key === selectedColor)
-                            ?.description
-                        : customColors.find((c) => c.id === selectedColor)
-                            ?.description}
-                    </p>
+                    <div>
+                      <Label className="text-sm font-medium mb-2 block">
+                        Description
+                      </Label>
+                      <p className="text-sm text-muted-foreground">
+                        {selectedColorType === "standard"
+                          ? colorFields.find((f) => f.key === selectedColor)
+                              ?.description
+                          : customColors.find((c) => c.id === selectedColor)
+                              ?.description}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </ScrollArea>
-            </div>
+                </ScrollArea>
+              </div>
+            </ScrollArea>
           </div>
         )}
       </div>

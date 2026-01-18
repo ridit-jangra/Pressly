@@ -1,5 +1,5 @@
 import JSZip from "jszip";
-import { INavigation } from "./types";
+import { IColors, INavigation } from "./types";
 
 const commonHeader = `<!DOCTYPE html>
 <html lang="en">`;
@@ -8,7 +8,7 @@ const commonMeta = `
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />`;
 
-const commonStyles = `
+const commonStyles = (colors: IColors) => `
 <style>
   * {
     margin: 0;
@@ -17,15 +17,14 @@ const commonStyles = `
   }
   
   body {
+    background-color: ${colors.background};
+    color: ${colors.foreground};
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     line-height: 1.6;
   }
   
-  /* Navigation Styles */
   nav {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     padding: 1rem 2rem;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
   }
   
   nav ul {
@@ -39,7 +38,6 @@ const commonStyles = `
   }
   
   nav ul li a {
-    color: white;
     text-decoration: none;
     font-weight: 500;
     font-size: 1.1rem;
@@ -48,24 +46,26 @@ const commonStyles = `
     transition: all 0.3s ease;
     display: block;
   }
+
+  nav ul li a:hover {
+    text-decoration: underline;
+  }
   
   nav ul li a:hover {
-    background: rgba(255,255,255,0.2);
+    background: ${colors.accent};
     transform: translateY(-2px);
   }
   
   nav ul li a.active {
-    background: rgba(255,255,255,0.3);
+    background: ${colors.primary};
   }
   
-  /* Main Content */
   main {
     max-width: 1200px;
     margin: 2rem auto;
     padding: 0 1rem;
   }
   
-  /* Layout Styles */
   .layout-container {
     margin-bottom: 2rem;
   }
@@ -79,7 +79,6 @@ const commonStyles = `
     min-height: 50px;
   }
   
-  /* Responsive */
   @media (max-width: 768px) {
     nav ul {
       flex-direction: column;
@@ -124,7 +123,7 @@ function getLayoutStyles(layout: any): string {
     min-height: ${layout.layoutData?.minHeight || 100}px;
   `;
 
-  // WordPress Columns layout
+  //  Columns layout
   if (layout.id === "wordpress-columns") {
     const columns = layout.state?.["Layout-Columns"] || 2;
     const columnDistribution =
@@ -149,7 +148,7 @@ function getLayoutStyles(layout: any): string {
       align-items: ${alignMap[alignItems] || "flex-start"};
     `;
   }
-  // WordPress Container layout
+  //  Container layout
   else if (layout.id === "wordpress-container") {
     const contentWidth =
       layout.state?.["Container-Content Width"] || "Full Width";
@@ -241,8 +240,8 @@ export function generatePageHtml(
   navigation: INavigation,
   pageBodyComponents: any[],
   pageUrl: string = "",
+  colors: IColors,
 ): string {
-  // Generate HTML for all layouts and their components
   const layoutsHtml = pageBodyComponents
     .sort((a, b) => (a.position || 0) - (b.position || 0))
     .map((layout) => generateLayoutHtml(layout))
@@ -252,7 +251,7 @@ export function generatePageHtml(
   <head>
     ${commonMeta}
     <title>${pageTitle}</title>
-    ${commonStyles}
+    ${commonStyles(colors)}
   </head>
   <body>
     ${navigationHtml(navigation, pageUrl)}

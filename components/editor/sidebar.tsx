@@ -16,20 +16,20 @@ import {
   MousePointerClick,
   Heading1,
   ImageIcon,
-  Video,
+  VideoIcon,
   SeparatorHorizontal,
-  Container,
+  ContainerIcon,
   SparklesIcon,
 } from "lucide-react";
 import {
-  WordPressButton,
-  WordPressHeading,
-  WordPressImage,
-  WordPressVideo,
-  WordPressSpacer,
-  WordPressIcon,
+  Button,
+  Heading,
+  Image,
+  Video,
+  Spacer,
+  Icon,
 } from "../site/components/";
-import { WordPressContainer, WordPressColumns } from "../site/layouts/";
+import { Container, Columns } from "../site/layouts/";
 
 export function Sidebar({
   components,
@@ -60,37 +60,37 @@ export function Sidebar({
         pageId: "button",
         id: "wp-button",
         label: "Button",
-        content: { node: new WordPressButton() },
+        content: { node: new Button() },
       },
       {
         pageId: "heading",
         id: "wp-heading",
         label: "Heading",
-        content: { node: new WordPressHeading() },
+        content: { node: new Heading() },
       },
       {
         pageId: "image",
         id: "wp-image",
         label: "Image",
-        content: { node: new WordPressImage() },
+        content: { node: new Image() },
       },
       {
         pageId: "video",
         id: "wp-video",
         label: "Video",
-        content: { node: new WordPressVideo() },
+        content: { node: new Video() },
       },
       {
         pageId: "spacer",
         id: "wp-spacer",
         label: "Spacer",
-        content: { node: new WordPressSpacer() },
+        content: { node: new Spacer() },
       },
       {
         pageId: "icon",
         id: "wp-icon",
         label: "Icon",
-        content: { node: new WordPressIcon() },
+        content: { node: new Icon() },
       },
     ];
 
@@ -113,7 +113,7 @@ export function Sidebar({
       {
         id: "video",
         name: "Video",
-        icon: Video,
+        icon: VideoIcon,
       },
       {
         id: "spacer",
@@ -129,29 +129,24 @@ export function Sidebar({
 
     const layoutComponents: ILayoutComponent[] = [
       {
-        pageId: "wordpress-layouts",
-        id: "wordpress-container",
+        pageId: "layouts",
+        id: "container",
         label: "Container",
-        content: { node: new WordPressContainer() },
+        content: { node: new Container() },
       },
       {
-        pageId: "wordpress-layouts",
-        id: "wordpress-columns",
+        pageId: "layouts",
+        id: "columns",
         label: "Columns",
-        content: { node: new WordPressColumns() },
+        content: { node: new Columns() },
       },
     ];
 
     const layoutPages: ILayoutPage[] = [
       {
-        id: "wordpress-layouts",
-        name: "WordPress Layouts",
-        icon: Container,
-      },
-      {
-        id: "classic-layouts",
-        name: "Classic Layouts",
-        icon: LayoutGrid,
+        id: "layouts",
+        name: "Layouts",
+        icon: ContainerIcon,
       },
     ];
 

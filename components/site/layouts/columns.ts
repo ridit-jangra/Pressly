@@ -1,7 +1,7 @@
 import { IComponentChildOption, IComponentOption, TOption } from "@/lib/types";
 import { LayoutComponentBase } from "../layoutComponent";
 
-export class WordPressColumns extends LayoutComponentBase {
+export class Columns extends LayoutComponentBase {
   editOptions: IComponentOption[] = [
     {
       id: "layout",

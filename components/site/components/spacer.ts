@@ -1,7 +1,7 @@
 import { Component } from "../component";
 import { IComponentChildOption, IComponentOption, TOption } from "@/lib/types";
 
-export class WordPressSpacer extends Component {
+export class Spacer extends Component {
   editOptions: IComponentOption[] = [
     {
       id: "layout",

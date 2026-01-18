@@ -22,13 +22,12 @@ import {
   SelectValue,
 } from "../shadcn/select";
 import { Button } from "../shadcn/button";
-import { XIcon, ChevronsUpDown } from "lucide-react";
+import { X, ChevronsUpDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Input } from "../shadcn/input";
 import { Label } from "../shadcn/label";
 import { Component } from "../site/component";
 import { ScrollArea } from "../shadcn/scroll-area";
-import ColorPicker from "../shadcn/color-picker";
 import { LayoutComponentBase } from "../site/layoutComponent";
 
 export function ComponentEditor({
@@ -39,8 +38,6 @@ export function ComponentEditor({
   formValues,
   setFormValues,
   setDraggableComponents,
-  draggableComponents,
-  layouts,
   setLayouts,
   colors,
   customColors,
@@ -100,7 +97,6 @@ export function ComponentEditor({
     }));
 
     if (isLayout && currentSelectedLayout) {
-      // Update layout
       setLayouts((prev: IExtendedLayout[]) =>
         prev.map((layout) => {
           if (layout.instanceId === currentSelectedLayout.instanceId) {
@@ -125,7 +121,6 @@ export function ComponentEditor({
         }),
       );
 
-      // Update current selected layout
       setCurrentSelectedLayout({
         ...currentSelectedLayout,
         state: {
@@ -134,7 +129,6 @@ export function ComponentEditor({
         },
       });
     } else if (currentSelectedComponent) {
-      // Update component
       setDraggableComponents((prev: IExtendedComponent[]) =>
         prev.map((item) => {
           if (item.instanceId === currentSelectedComponent.instanceId) {
@@ -159,7 +153,6 @@ export function ComponentEditor({
         }),
       );
 
-      // Also update in layouts
       setLayouts((prev: IExtendedLayout[]) =>
         prev.map((layout) => {
           const updatedComponents = { ...layout.components };
@@ -218,7 +211,7 @@ export function ComponentEditor({
           {isLayout ? "Layout Editor" : "Component Editor"}
         </p>
         <Button variant={"ghost"} onClick={handleClose}>
-          <XIcon style={{ width: "24px", height: "auto" }} />
+          <X style={{ width: "24px", height: "auto" }} />
         </Button>
       </div>
 
@@ -328,41 +321,176 @@ export function ComponentEditor({
                                     <SelectContent>
                                       <SelectGroup>
                                         <SelectLabel>
-                                          {option.label}
+                                          Standard Colors
                                         </SelectLabel>
                                         {colors && (
                                           <>
-                                            <SelectItem
-                                              key={i}
-                                              value={colors.primary}
-                                              className={`bg-${colors.primary}`}
-                                            >
-                                              Primary
+                                            <SelectItem value={colors.primary}>
+                                              <div className="flex items-center gap-2">
+                                                <div
+                                                  className="w-4 h-4 rounded border"
+                                                  style={{
+                                                    backgroundColor:
+                                                      colors.primary,
+                                                  }}
+                                                />
+                                                Primary
+                                              </div>
                                             </SelectItem>
                                             <SelectItem
-                                              key={i}
                                               value={colors.primaryForeground}
-                                              className={`bg-[${colors.primaryForeground}]`}
                                             >
-                                              Primary Foreground
+                                              <div className="flex items-center gap-2">
+                                                <div
+                                                  className="w-4 h-4 rounded border"
+                                                  style={{
+                                                    backgroundColor:
+                                                      colors.primaryForeground,
+                                                  }}
+                                                />
+                                                Primary Foreground
+                                              </div>
+                                            </SelectItem>
+                                            <SelectItem
+                                              value={colors.secondary}
+                                            >
+                                              <div className="flex items-center gap-2">
+                                                <div
+                                                  className="w-4 h-4 rounded border"
+                                                  style={{
+                                                    backgroundColor:
+                                                      colors.secondary,
+                                                  }}
+                                                />
+                                                Secondary
+                                              </div>
+                                            </SelectItem>
+                                            <SelectItem
+                                              value={colors.secondaryForeground}
+                                            >
+                                              <div className="flex items-center gap-2">
+                                                <div
+                                                  className="w-4 h-4 rounded border"
+                                                  style={{
+                                                    backgroundColor:
+                                                      colors.secondaryForeground,
+                                                  }}
+                                                />
+                                                Secondary Foreground
+                                              </div>
+                                            </SelectItem>
+                                            <SelectItem
+                                              value={colors.background}
+                                            >
+                                              <div className="flex items-center gap-2">
+                                                <div
+                                                  className="w-4 h-4 rounded border"
+                                                  style={{
+                                                    backgroundColor:
+                                                      colors.background,
+                                                  }}
+                                                />
+                                                Background
+                                              </div>
+                                            </SelectItem>
+                                            <SelectItem
+                                              value={colors.foreground}
+                                            >
+                                              <div className="flex items-center gap-2">
+                                                <div
+                                                  className="w-4 h-4 rounded border"
+                                                  style={{
+                                                    backgroundColor:
+                                                      colors.foreground,
+                                                  }}
+                                                />
+                                                Foreground
+                                              </div>
+                                            </SelectItem>
+                                            <SelectItem value={colors.accent}>
+                                              <div className="flex items-center gap-2">
+                                                <div
+                                                  className="w-4 h-4 rounded border"
+                                                  style={{
+                                                    backgroundColor:
+                                                      colors.accent,
+                                                  }}
+                                                />
+                                                Accent
+                                              </div>
+                                            </SelectItem>
+                                            <SelectItem
+                                              value={colors.accentForeground}
+                                            >
+                                              <div className="flex items-center gap-2">
+                                                <div
+                                                  className="w-4 h-4 rounded border"
+                                                  style={{
+                                                    backgroundColor:
+                                                      colors.accentForeground,
+                                                  }}
+                                                />
+                                                Accent Foreground
+                                              </div>
+                                            </SelectItem>
+                                            <SelectItem value={colors.muted}>
+                                              <div className="flex items-center gap-2">
+                                                <div
+                                                  className="w-4 h-4 rounded border"
+                                                  style={{
+                                                    backgroundColor:
+                                                      colors.muted,
+                                                  }}
+                                                />
+                                                Muted
+                                              </div>
+                                            </SelectItem>
+                                            <SelectItem
+                                              value={colors.mutedForeground}
+                                            >
+                                              <div className="flex items-center gap-2">
+                                                <div
+                                                  className="w-4 h-4 rounded border"
+                                                  style={{
+                                                    backgroundColor:
+                                                      colors.mutedForeground,
+                                                  }}
+                                                />
+                                                Muted Foreground
+                                              </div>
                                             </SelectItem>
                                           </>
                                         )}
-                                        {customColors &&
-                                          customColors.map((opt, i) => (
-                                            <SelectItem key={i} value={opt}>
-                                              {opt.name}
-                                            </SelectItem>
-                                          ))}
                                       </SelectGroup>
+                                      {customColors &&
+                                        customColors.length > 0 && (
+                                          <SelectGroup>
+                                            <SelectLabel>
+                                              Custom Colors
+                                            </SelectLabel>
+                                            {customColors.map(
+                                              (customColor, i) => (
+                                                <SelectItem
+                                                  key={i}
+                                                  value={customColor.value}
+                                                >
+                                                  <div className="flex items-center gap-2">
+                                                    <div
+                                                      className="w-4 h-4 rounded border"
+                                                      style={{
+                                                        backgroundColor:
+                                                          customColor.value,
+                                                      }}
+                                                    />
+                                                    {customColor.name}
+                                                  </div>
+                                                </SelectItem>
+                                              ),
+                                            )}
+                                          </SelectGroup>
+                                        )}
                                     </SelectContent>
                                   </Select>
-                                  // <ColorPicker
-                                  //   value={fieldValue}
-                                  //   onChange={(e) =>
-                                  //     handleValueChange(fieldKey, e)
-                                  //   }
-                                  // />
                                 )}
                               </div>
                             );

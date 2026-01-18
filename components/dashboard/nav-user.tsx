@@ -26,9 +26,14 @@ import {
   useSidebar,
 } from "../shadcn/sidebar";
 import { IUser } from "@/lib/types";
+import { AuthService } from "@/lib/authService";
 
 export function NavUser({ user }: { user: IUser }) {
   const { isMobile } = useSidebar();
+
+  const handleLogout = () => {
+    AuthService.logout();
+  };
 
   return (
     <SidebarMenu>
@@ -72,29 +77,7 @@ export function NavUser({ user }: { user: IUser }) {
               </DropdownMenuLabel>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <Sparkles />
-                Upgrade to Pro
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
-                Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCard />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell />
-                Notifications
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>
               <LogOut />
               Log out
             </DropdownMenuItem>

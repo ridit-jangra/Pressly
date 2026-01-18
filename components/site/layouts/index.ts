@@ -1,4 +1,4 @@
-import { WordPressColumns } from "./columns";
-import { WordPressContainer } from "./container";
+import { Columns } from "./columns";
+import { Container } from "./container";
 
-export { WordPressColumns, WordPressContainer };
+export { Columns, Container };
