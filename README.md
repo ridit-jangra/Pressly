@@ -1,36 +1,117 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Pressly
 
-## Getting Started
+**Pressly** is a no‑code website builder that lets anyone create modern websites without writing a single line of code or having technical experience.
 
-First, run the development server:
+It’s simple on the surface, powerful underneath.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ✨ What is Pressly?
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Pressly is a **drag‑and‑drop website builder** where you design, edit, and structure websites visually using modern components.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+No coding. No setup. No complexity.
 
-## Learn More
+You focus on building — Pressly handles the rest.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🧩 Key Features
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 🖱 Drag & Drop Editor
 
-## Deploy on Vercel
+- Visual editor with modern, ready‑to‑use components
+- Edit content, layout, and styles directly
+- Clean, distraction‑free interface
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 📄 Page Management
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Create and manage multiple pages
+- Reorder pages easily
+- Simple page structure with clear hierarchy
+
+### 🧭 Navigation Management
+
+- Visual navigation builder
+- Control menus and page links without code
+- Real‑time updates while editing
+
+### 🎨 Color Palette Management
+
+- Centralized color system
+- Update colors once, apply everywhere
+- Consistent design across the entire site
+
+### ☁️ Cloud & Local Storage
+
+- **Login required** to create and manage websites
+- Cloud storage to safely save and sync projects
+- Optional **local mode** to store data directly on your device
+
+### 📦 Static Export
+
+- Export your website as **static HTML**
+- Packed neatly inside a **ZIP file**
+- Host anywhere — no lock‑in
+
+---
+
+## 🚀 What Pressly Is For
+
+- Personal websites
+- Portfolios
+- Landing pages
+- Simple content sites
+- Anyone who wants results without learning code
+
+---
+
+## ❌ What Pressly Is Not
+
+- Not a traditional CMS
+- Not code‑heavy or developer‑only
+- Not plugin‑bloated
+- Not complicated by design
+
+---
+
+## 🎨 Design Philosophy
+
+- Modern, clean UI
+- Fun but focused
+- Powerful without feeling heavy
+- Tools that stay out of the way
+
+Every feature must be:
+
+- Easy to understand
+- Fast to use
+- Clearly useful
+
+---
+
+## 🛠 Tech (Planned)
+
+- Modern frontend stack
+- Component‑based editor
+- Static HTML export system
+
+(Exact tools may change — simplicity won’t.)
+
+---
+
+## 📦 Status
+
+Pressly is actively being designed and built.
+
+This README reflects the **core idea and direction**, not the final feature list.
+
+---
+
+## 🧠 Philosophy
+
+> Website building should feel obvious.
+
+Pressly removes friction so ideas can turn into websites — fast.
+
+---
