@@ -45,15 +45,12 @@ const commonStyles = (colors: IColors) => `
     border-radius: 8px;
     transition: all 0.3s ease;
     display: block;
+    color: ${colors.foreground};
   }
 
   nav ul li a:hover {
     text-decoration: underline;
-  }
-  
-  nav ul li a:hover {
-    background: ${colors.accent};
-    transform: translateY(-2px);
+    color: ${colors.accent};
   }
   
   nav ul li a.active {

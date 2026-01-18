@@ -8,15 +8,7 @@ import { Label } from "../shadcn/label";
 import ColorPicker from "../shadcn/color-picker";
 import { toast } from "sonner";
 import { ScrollArea } from "../shadcn/scroll-area";
-import {
-  Check,
-  X,
-  RotateCcw,
-  Download,
-  Upload,
-  Plus,
-  Trash2,
-} from "lucide-react";
+import { Check, X, RotateCcw, Plus, Trash2 } from "lucide-react";
 import { Input } from "../shadcn/input";
 import {
   Dialog,
@@ -287,10 +279,10 @@ export function ManageColors() {
   return (
     <div className="w-full h-full flex flex-col bg-background">
       <div className="border-b bg-card">
-        <div className="px-6 py-4">
+        <div className="pb-4">
           <div className="flex items-center justify-between mb-4">
             <div className="flex flex-col gap-1">
-              <h1 className="text-2xl font-semibold font-mono">
+              <h1 className="text-4xl font-semibold font-mono">
                 Color Palette
               </h1>
               <p className="text-sm text-muted-foreground">

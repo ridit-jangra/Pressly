@@ -21,7 +21,6 @@ import {
   CheckCheck,
   Palette,
   X,
-  Globe,
   Calendar,
   FileText,
   Layout,
@@ -167,13 +166,13 @@ export function Site() {
     try {
       setExportCurrentLog("Starting...");
       setExportProgress(4);
-      await delay(700);
+      await delay(550);
 
       const pagesFiles: { name: string; content: string }[] = [];
 
       setExportCurrentLog("Generating code...");
       setExportProgress(10);
-      await delay(700);
+      await delay(550);
 
       pages.map((v) => {
         const page: { name: string; content: string } = {
@@ -191,26 +190,26 @@ export function Site() {
       });
 
       setExportProgress(30);
-      await delay(700);
+      await delay(550);
 
       setExportCurrentLog("Generating zip name...");
       setExportProgress(35);
-      await delay(700);
+      await delay(550);
 
       const zipName = generateZipFileName(siteData.name);
       setExportProgress(45);
-      await delay(700);
+      await delay(550);
 
       setExportCurrentLog("Generating home page name...");
       setExportProgress(55);
-      await delay(700);
+      await delay(550);
 
       const homePageName = generateHomePageFileName();
       setExportProgress(63);
-      await delay(700);
+      await delay(550);
 
       setExportCurrentLog("Generating home page code...");
-      await delay(700);
+      await delay(550);
 
       const homePageHtml = generatePageHtml(
         homePage.title,
@@ -220,7 +219,7 @@ export function Site() {
         colors,
       );
       setExportProgress(80);
-      await delay(700);
+      await delay(550);
 
       setExportCurrentLog("Adding home page to index...");
       const homePageFile: { name: string; content: string } = {
@@ -230,18 +229,18 @@ export function Site() {
 
       pagesFiles.push(homePageFile);
       setExportProgress(90);
-      await delay(700);
+      await delay(550);
 
       setExportCurrentLog("Generating zip file...");
-      await delay(700);
+      await delay(550);
       const zipFile = await generateZipFile(zipName, pagesFiles);
       setExportProgress(100);
-      await delay(700);
+      await delay(550);
 
       setZipFile(zipFile);
 
       setExportCurrentLog("Export complete!");
-      await delay(700);
+      await delay(550);
 
       setExportSiteStep(5);
       setExportStart(false);
@@ -293,119 +292,9 @@ export function Site() {
 
   return (
     siteData && (
-      <div className="w-full h-full flex flex-col gap-6 p-6">
+      <div className="w-full h-full flex flex-col gap-6">
         <div className="flex flex-col gap-2">
-          <h1 className="text-4xl font-bold font-mono">{siteData.name}</h1>
-          <div className="flex items-center gap-4 text-muted-foreground">
-            <div className="flex items-center gap-2">
-              <Globe className="w-4 h-4" />
-              <span className="text-sm">{siteData.url}</span>
-            </div>
-            {getRecentlyUpdatedPage() && (
-              <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4" />
-                <span className="text-sm">
-                  Last updated:{" "}
-                  {new Date(
-                    getRecentlyUpdatedPage()!.updatedAt,
-                  ).toLocaleDateString()}
-                </span>
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card
-            className="cursor-pointer hover:border-primary transition-colors"
-            onClick={() => handleNavigate("/dashboard?page=pages/all-pages")}
-          >
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <Book className="w-4 h-4" />
-                Pages
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">{pages?.length || 0}</div>
-              <p className="text-xs text-muted-foreground mt-1">
-                {getTotalComponents()} total components
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card
-            className="cursor-pointer hover:border-primary transition-colors"
-            onClick={() => handleNavigate("/dashboard?page=navigation/manage")}
-          >
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <ArrowLeftRight className="w-4 h-4" />
-                Navigation
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">
-                {navigation?.items.length || 0}
-              </div>
-              <p className="text-xs text-muted-foreground mt-1">
-                {navigation?.name || "No menu"}
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card
-            className="cursor-pointer hover:border-primary transition-colors"
-            onClick={() => handleNavigate("/dashboard?page=colors/manage")}
-          >
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <Palette className="w-4 h-4" />
-                Colors
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold">{customColors.length}</div>
-              <p className="text-xs text-muted-foreground mt-1">
-                Custom colors + 10 standard
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-dashed">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium flex items-center gap-2">
-                <Layout className="w-4 h-4" />
-                Ready to Export
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center gap-2">
-                {pages?.length && navigation?.items.length ? (
-                  <>
-                    <CheckCheck className="w-6 h-6 text-green-600" />
-                    <span className="text-sm font-medium text-green-600">
-                      Ready
-                    </span>
-                  </>
-                ) : (
-                  <>
-                    <X className="w-6 h-6 text-orange-600" />
-                    <span className="text-sm font-medium text-orange-600">
-                      Not Ready
-                    </span>
-                  </>
-                )}
-              </div>
-              <p className="text-xs text-muted-foreground mt-1">
-                {!pages?.length
-                  ? "Add pages"
-                  : !navigation?.items.length
-                    ? "Add navigation"
-                    : "All set!"}
-              </p>
-            </CardContent>
-          </Card>
+          <h1 className="text-4xl font-mono">{siteData.name}</h1>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
