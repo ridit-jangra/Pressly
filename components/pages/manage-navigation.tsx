@@ -206,12 +206,13 @@ export function ManageNavigation() {
                         </SelectContent>
                       </Select>
 
-                      <Input
+                      <Button
                         type="submit"
-                        value={"Add"}
                         className="mt-5"
                         onClick={handleAddItem}
-                      />
+                      >
+                        Add Item
+                      </Button>
                     </FieldGroup>
                   </form>
                 </ScrollArea>
