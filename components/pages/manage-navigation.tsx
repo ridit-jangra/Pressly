@@ -174,9 +174,8 @@ export function ManageNavigation() {
                     "h-full flex flex-col items-center justify-between gap-2 mt-2"
                   }
                 >
-                  <p className="text-2xl font-bold">Menu Structure</p>
                   <form
-                    className="mt-6 flex flex-col gap-3"
+                    className="flex flex-col gap-3"
                     onSubmit={handleAddItem}
                   >
                     <p className="text-xl">Add Menu Item</p>

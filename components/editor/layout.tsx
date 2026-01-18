@@ -4,9 +4,11 @@ import { useEffect, useState, useRef } from "react";
 import { ActivityBar } from "./activitybar";
 import {
   IActivitybarTool,
+  IColors,
   IComponent,
   IComponentPage,
   IComponentState,
+  ICustomColor,
   IExtendedComponent,
   IExtendedLayout,
   ILayoutComponent,
@@ -51,6 +53,8 @@ export function EditorLayout({ page: InitPage }: { page: IPage }) {
   const [currentViewTool, setCurrentViewTool] = useState<string>();
   const [components, setComponents] = useState<IComponent[]>([]);
   const [componentsPages, setComponentsPages] = useState<IComponentPage[]>([]);
+  const [colors, setColors] = useState<IColors | null>(null);
+  const [customColors, setCustomColors] = useState<ICustomColor[]>([]);
   const [layoutComponents, setLayoutComponents] = useState<ILayoutComponent[]>(
     [],
   );
@@ -258,6 +262,40 @@ export function EditorLayout({ page: InitPage }: { page: IPage }) {
       setNavigation({ items: [], name: "Init Menu" });
     }
   };
+
+  const fetchColors = async () => {
+    const v = (await Storage.getItem("colors", "colors")) as IColors | null;
+    const customColorsData = (await Storage.getItem(
+      "custom-colors",
+      "custom-colors",
+    )) as [] | null;
+
+    if (v) {
+      setColors(v);
+    } else {
+      const defaultColors: IColors = {
+        background: "#ffffff",
+        foreground: "#000000",
+        accent: "#3b82f6",
+        accentForeground: "#ffffff",
+        muted: "#f1f5f9",
+        mutedForeground: "#64748b",
+        primary: "#0f172a",
+        primaryForeground: "#ffffff",
+        secondary: "#f1f5f9",
+        secondaryForeground: "#0f172a",
+      };
+      setColors(defaultColors);
+    }
+
+    if (customColorsData && Array.isArray(customColorsData)) {
+      setCustomColors(customColorsData);
+    }
+  };
+
+  useEffect(() => {
+    fetchColors();
+  }, []);
 
   const formatDate = (date: Date): string => {
     const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -538,6 +576,8 @@ export function EditorLayout({ page: InitPage }: { page: IPage }) {
                       setLayouts={setLayouts}
                       setPage={setPage}
                       page={page}
+                      colors={colors}
+                      customColors={customColors}
                     />
                   </ResizablePanel>
                 </>

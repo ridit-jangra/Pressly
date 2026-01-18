@@ -6,7 +6,6 @@ import {
   IComponentOption,
   IExtendedComponent,
   IExtendedLayout,
-  IPage,
 } from "@/lib/types";
 import {
   Collapsible,
@@ -43,6 +42,8 @@ export function ComponentEditor({
   draggableComponents,
   layouts,
   setLayouts,
+  colors,
+  customColors,
 }: IComponentEditorProps) {
   const [options, setOptions] = useState<IComponentOption[]>();
   const [childOptions, setChildOptions] = useState<IComponentChildOption[]>();
@@ -121,7 +122,7 @@ export function ComponentEditor({
             };
           }
           return layout;
-        })
+        }),
       );
 
       // Update current selected layout
@@ -155,7 +156,7 @@ export function ComponentEditor({
             };
           }
           return item;
-        })
+        }),
       );
 
       // Also update in layouts
@@ -187,7 +188,7 @@ export function ComponentEditor({
                   };
                 }
                 return comp;
-              }
+              },
             );
           });
 
@@ -198,7 +199,7 @@ export function ComponentEditor({
             };
           }
           return layout;
-        })
+        }),
       );
     }
   };
@@ -296,7 +297,7 @@ export function ComponentEditor({
                                     onChange={(e) =>
                                       handleValueChange(
                                         fieldKey,
-                                        parseFloat(e.target.value)
+                                        parseFloat(e.target.value),
                                       )
                                     }
                                   />
@@ -308,18 +309,60 @@ export function ComponentEditor({
                                     onChange={(e) =>
                                       handleValueChange(
                                         fieldKey,
-                                        e.target.value
+                                        e.target.value,
                                       )
                                     }
                                   />
                                 )}
                                 {option.type === "color" && (
-                                  <ColorPicker
+                                  <Select
                                     value={fieldValue}
-                                    onChange={(e) =>
-                                      handleValueChange(fieldKey, e)
-                                    }
-                                  />
+                                    onValueChange={(value) => {
+                                      option.onChange?.(value);
+                                      handleValueChange(fieldKey, value);
+                                    }}
+                                  >
+                                    <SelectTrigger className="w-full">
+                                      <SelectValue>{fieldValue}</SelectValue>
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectGroup>
+                                        <SelectLabel>
+                                          {option.label}
+                                        </SelectLabel>
+                                        {colors && (
+                                          <>
+                                            <SelectItem
+                                              key={i}
+                                              value={colors.primary}
+                                              className={`bg-${colors.primary}`}
+                                            >
+                                              Primary
+                                            </SelectItem>
+                                            <SelectItem
+                                              key={i}
+                                              value={colors.primaryForeground}
+                                              className={`bg-[${colors.primaryForeground}]`}
+                                            >
+                                              Primary Foreground
+                                            </SelectItem>
+                                          </>
+                                        )}
+                                        {customColors &&
+                                          customColors.map((opt, i) => (
+                                            <SelectItem key={i} value={opt}>
+                                              {opt.name}
+                                            </SelectItem>
+                                          ))}
+                                      </SelectGroup>
+                                    </SelectContent>
+                                  </Select>
+                                  // <ColorPicker
+                                  //   value={fieldValue}
+                                  //   onChange={(e) =>
+                                  //     handleValueChange(fieldKey, e)
+                                  //   }
+                                  // />
                                 )}
                               </div>
                             );

@@ -1,10 +1,10 @@
 "use client";
 
 import { Content } from "@/components/dashboard/content";
-import { ExampleContent } from "@/components/dashboard/example-content";
 import { AppSidebar } from "@/components/dashboard/sidebar";
 import { AddPage } from "@/components/pages/add-page";
 import { AllPages } from "@/components/pages/all-pages";
+import { ManageColors } from "@/components/pages/manage-colors";
 import { ManageNavigation } from "@/components/pages/manage-navigation";
 import { Site } from "@/components/pages/site";
 import { Toaster } from "@/components/shadcn/sonner";
@@ -24,7 +24,7 @@ function DashboardContent() {
     "pages/all-pages": <AllPages />,
     "pages/add-page": <AddPage />,
     "navigation/manage": <ManageNavigation />,
-    "colors/manage": <ExampleContent />,
+    "colors/manage": <ManageColors />,
   };
 
   useEffect(() => {

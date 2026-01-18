@@ -196,6 +196,8 @@ export interface IComponentEditorProps {
   ) => void;
   setPage: (page: IPage) => void;
   page: IPage;
+  colors: IColors | null;
+  customColors: ICustomColor[];
 }
 
 export interface IPosition {
@@ -296,6 +298,26 @@ export interface IExportSiteOptions {
   pages: IPage[];
   navigation: INavigation;
   siteData: ISite;
+}
+
+export interface IColors {
+  primary: string;
+  primaryForeground: string;
+  secondary: string;
+  secondaryForeground: string;
+  background: string;
+  foreground: string;
+  accent: string;
+  accentForeground: string;
+  muted: string;
+  mutedForeground: string;
+}
+
+export interface ICustomColor {
+  id: string;
+  name: string;
+  value: string;
+  description: string;
 }
 
 export type TOption =

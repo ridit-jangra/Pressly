@@ -176,6 +176,8 @@ export function Site() {
       setExportProgress(90);
       await delay(400);
 
+      console.log("pages files", pagesFiles);
+
       setExportCurrentLog("Generating zip file...");
       await delay(300);
       const zipFile = await generateZipFile(zipName, pagesFiles);
@@ -267,7 +269,7 @@ export function Site() {
                 <div
                   className="flex items-center justify-between bg-muted w-full p-2 rounded-xl cursor-pointer hover:bg-muted/80 transition-colors"
                   onClick={() =>
-                    handleNavigate("/dashboard?page=navigation/manage")
+                    handleNavigate("/dashboard?page=colors/manage")
                   }
                 >
                   <span className="flex gap-2 items-center font-mono">
