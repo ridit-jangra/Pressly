@@ -289,6 +289,8 @@ export function Editor({
     setDraggedComponent(null);
   };
 
+  // Update getLayoutStyles function in Editor.tsx to support new layouts
+
   const getLayoutStyles = (layout: IExtendedLayout): React.CSSProperties => {
     const baseStyles: React.CSSProperties = {
       gap: `${layout.layout.gap}px`,
@@ -298,6 +300,137 @@ export function Editor({
       minHeight: `${layout.layout.minHeight}px`,
     };
 
+    // Card Grid Layout
+    if (layout.id === "card-grid") {
+      const shadowMap: Record<string, string> = {
+        none: "none",
+        sm: "0 1px 2px rgba(0,0,0,0.05)",
+        md: "0 4px 6px rgba(0,0,0,0.07)",
+        lg: "0 10px 15px rgba(0,0,0,0.1)",
+        xl: "0 20px 25px rgba(0,0,0,0.1)",
+      };
+
+      const hoverClass = (layout.layout as any).hoverEffect || "lift";
+
+      // Set CSS variables for card zones
+      document.documentElement.style.setProperty(
+        "--zone-bg",
+        (layout.layout as any).cardBg || "#ffffff",
+      );
+      document.documentElement.style.setProperty(
+        "--zone-border",
+        (layout.layout as any).border === "Yes"
+          ? `1px solid ${(layout.layout as any).borderColor || "#e2e8f0"}`
+          : "none",
+      );
+      document.documentElement.style.setProperty(
+        "--zone-radius",
+        `${(layout.layout as any).cardBorderRadius || 8}px`,
+      );
+      document.documentElement.style.setProperty(
+        "--zone-padding",
+        `${(layout.layout as any).padding || 24}px`,
+      );
+      document.documentElement.style.setProperty(
+        "--zone-shadow",
+        shadowMap[(layout.layout as any).shadow] || shadowMap.sm,
+      );
+
+      return {
+        ...baseStyles,
+        display: "grid",
+        gridTemplateColumns: `repeat(${layout.layout.columns}, 1fr)`,
+        padding: `${(layout.layout as any).containerPadding || 0}px`,
+        backgroundColor: "transparent",
+      };
+    }
+
+    // Hero Section Layout
+    if (layout.id === "hero-section") {
+      const layoutType = (layout.layout as any).layoutType || "centered";
+      const verticalAlign = (layout.layout as any).verticalAlign || "center";
+      const contentWidthMap: Record<string, string> = {
+        sm: "640px",
+        md: "768px",
+        lg: "1024px",
+        xl: "1280px",
+        full: "100%",
+      };
+      const contentWidth =
+        contentWidthMap[(layout.layout as any).contentWidth] ||
+        contentWidthMap.lg;
+
+      const alignMap: Record<string, string> = {
+        start: "flex-start",
+        center: "center",
+        end: "flex-end",
+      };
+
+      const borderBottom =
+        (layout.layout as any).borderBottom === "Yes"
+          ? `1px solid ${(layout.layout as any).borderColor || "#e2e8f0"}`
+          : "none";
+
+      return {
+        ...baseStyles,
+        display: "grid",
+        gridTemplateColumns: layoutType === "centered" ? "1fr" : "1fr 1fr",
+        alignItems: alignMap[verticalAlign] || "center",
+        maxWidth: contentWidth,
+        margin: "0 auto",
+        padding: `${(layout.layout as any).paddingTop}px ${layout.layout.padding}px ${(layout.layout as any).paddingBottom}px`,
+        borderBottom,
+      };
+    }
+
+    // Section Layout
+    if (layout.id === "section-layout") {
+      const maxWidthMap: Record<string, string> = {
+        sm: "640px",
+        md: "768px",
+        lg: "1024px",
+        xl: "1280px",
+        "2xl": "1536px",
+        full: "100%",
+      };
+      const maxWidth =
+        maxWidthMap[(layout.layout as any).maxWidth] || maxWidthMap.lg;
+
+      const borderTop =
+        (layout.layout as any).borderTop === "Yes"
+          ? `1px solid ${(layout.layout as any).borderColor || "#e2e8f0"}`
+          : "none";
+      const borderBottom =
+        (layout.layout as any).borderBottom === "Yes"
+          ? `1px solid ${(layout.layout as any).borderColor || "#e2e8f0"}`
+          : "none";
+
+      return {
+        ...baseStyles,
+        display: "grid",
+        gridTemplateColumns: "1fr",
+        maxWidth,
+        margin: "0 auto",
+        width: "100%",
+        padding: `${(layout.layout as any).paddingTop}px ${(layout.layout as any).paddingX}px ${(layout.layout as any).paddingBottom}px`,
+        borderTop,
+        borderBottom,
+        gap: 0,
+      };
+    }
+
+    // Feature Grid Layout
+    if (layout.id === "feature-grid") {
+      const featureStyle = (layout.layout as any).featureStyle || "icon-top";
+
+      return {
+        ...baseStyles,
+        display: "grid",
+        gridTemplateColumns: `repeat(${layout.layout.columns}, 1fr)`,
+      };
+    }
+
+    // Existing layouts (Container, Columns)
     if (layout.id === "wordpress-columns") {
       const columnTemplate =
         (layout.layout as any).getColumnTemplate?.() ||
@@ -324,7 +457,6 @@ export function Editor({
       const paddingBottom = (layout.layout as any).paddingBottom || 40;
       const paddingLeft = (layout.layout as any).paddingLeft || 40;
       const boxShadow = (layout.layout as any).boxShadow || "None";
-      const zIndex = (layout.layout as any).zIndex || 0;
 
       const shadowMap: Record<string, string> = {
         None: "none",
@@ -346,18 +478,14 @@ export function Editor({
             : "none",
         padding: `${paddingTop}px ${paddingRight}px ${paddingBottom}px ${paddingLeft}px`,
         boxShadow: shadowMap[boxShadow],
-        zIndex,
       };
     }
 
+    // Default grid layout
     return {
       ...baseStyles,
       display: "grid",
-      gridTemplateColumns:
-        layout.layout.id === "sidebar-layout"
-          ? (layout.layout as any).getSidebarWidth?.() ||
-            `repeat(${layout.layout.columns}, 1fr)`
-          : `repeat(${layout.layout.columns}, 1fr)`,
+      gridTemplateColumns: `repeat(${layout.layout.columns}, 1fr)`,
       gridTemplateRows: `repeat(${layout.layout.rows}, minmax(${layout.layout.minHeight}px, auto))`,
     };
   };

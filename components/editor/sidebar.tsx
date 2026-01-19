@@ -20,7 +20,12 @@ import {
   SeparatorHorizontal,
   ContainerIcon,
   SparklesIcon,
+  LayoutTemplate,
+  Blocks,
+  Grid3x3,
+  Star,
 } from "lucide-react";
+
 import {
   Button,
   Heading,
@@ -29,7 +34,15 @@ import {
   Spacer,
   Icon,
 } from "../site/components/";
-import { Container, Columns } from "../site/layouts/";
+
+import {
+  Container,
+  Columns,
+  CardGrid,
+  HeroSection,
+  Section,
+  FeatureGrid,
+} from "../site/layouts/";
 
 export function Sidebar({
   components,
@@ -129,24 +142,53 @@ export function Sidebar({
 
     const layoutComponents: ILayoutComponent[] = [
       {
-        pageId: "layouts",
+        pageId: "basic",
         id: "container",
         label: "Container",
         content: { node: new Container() },
       },
       {
-        pageId: "layouts",
+        pageId: "basic",
         id: "columns",
         label: "Columns",
         content: { node: new Columns() },
+      },
+      {
+        pageId: "basic",
+        id: "section",
+        label: "Section",
+        content: { node: new Section() },
+      },
+      {
+        pageId: "advanced",
+        id: "hero-section",
+        label: "Hero Section",
+        content: { node: new HeroSection() },
+      },
+      {
+        pageId: "advanced",
+        id: "card-grid",
+        label: "Card Grid",
+        content: { node: new CardGrid() },
+      },
+      {
+        pageId: "advanced",
+        id: "feature-grid",
+        label: "Feature Grid",
+        content: { node: new FeatureGrid() },
       },
     ];
 
     const layoutPages: ILayoutPage[] = [
       {
-        id: "layouts",
-        name: "Layouts",
+        id: "basic",
+        name: "Basic",
         icon: ContainerIcon,
+      },
+      {
+        id: "advanced",
+        name: "Advanced",
+        icon: LayoutTemplate,
       },
     ];
 
